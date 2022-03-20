@@ -1,0 +1,116 @@
+---
+title: "Data QCQA" 
+knit: (function(inputFile, encoding) { rmarkdown::render(inputFile, encoding = encoding, output_file = file.path(dirname(inputFile), 'BB2_data_QCQA.html')) })
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+<!-- NOTES: 
+1) Make sure to update file name in knit above (e.g., BB2_data_QCQA.html) 
+2) Update init file below (e.g., BB2_data_QCQA.R) -->
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(dplyr)
+library(plotly)
+library(ggplot2)
+library(knitr)
+```
+
+```{r echo=FALSE}
+# Comments/Notes
+# 1) Make variables generalizable for different variable names - USE AMERIFLUX NAMES HERE
+# 2) NEED TO ADD 7200, 7700 temp and 7200 RH & CHECK WHICH TEMP IS USED TO SONIC (cross wind corrected or no)
+# 3) Think about output directory (can change by replacing dirname(inputFile) above)
+```
+
+<!-- specify init file to read -->
+```{r echo=FALSE}
+read_chunk('init_files/BB2_data_QCQA.R')
+```
+
+```{r, echo=FALSE}
+<<LoadData>>
+```
+
+Sonic data 
+=======================================================================
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Sonic variables and diagnostics
+
+```{r}
+# Load all plotting functions
+sonic_plots(data,vars_sonic,units_sonic,pitch_ind)
+```
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### mean wind speed vs. u*
+```{r}
+scatter_plot_QCQA(data,data$wind_speed,data$u_,data$year,"wind_speed","u_") 
+```
+
+### sigma_w vs. u*
+```{r}
+scatter_plot_QCQA(data,data$u_,sqrt(data$w_var),data$year,"u_","sqrt(data$w_var)")
+```
+
+Temperature data 
+=======================================================================
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Air and RH temperature comparison 
+```{r}
+temp_RH_plots(data,vars_temp,vars_RH)
+```
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Temperature scatterplot
+```{r}
+p <- scatter_plot_temp_QCQA(data,data$AIR_TEMP_2M,data$sonic_temperature-273.15,data$air_t_mean-273.15,c("sonic1","sonic2"),"AIR_TEMP_2M","Other Air Temperature")
+toWebGL(ggplotly(p))
+```
+
+### RH HMP vs. RH 7200
+
+```{r}
+scatter_plot_QCQA(data,data$RH_2M,data$RH,data$year,"HMP_RH","RH")
+```
+
+
+Radiation data  
+=======================================================================
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+### Radiation timeseries  
+```{r}
+radiation_plots(data,vars_radiometer,vars_NETRAD,vars_PPFD)
+```
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### SW_IN vs PPDF_IN
+```{r}
+scatter_plot_QCQA(data,data$SHORTWAVE_IN,data$INCOMING_PAR,data$year,"SHORTWAVE_IN","INCOMING_PAR")
+```
+
+### SW_OUT vs PPFD_IN
+
+```{r}
+scatter_plot_QCQA(data,data$SHORTWAVE_OUT,data$REFLECTED_PAR,data$year,"SHORTWAVE_OUT","REFLECTED_PAR")
+```
+
+

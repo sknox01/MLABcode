@@ -1,0 +1,13 @@
+name: Test2
+title: Test2
+username:
+account: ubcmicrometlab
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5829563
+bundleId: 5669354
+url: https://ubcmicrometlab.shinyapps.io/Test2/
+when: 1646967520.17559
+lastSyncTime: 1646967520.1756
+asMultiple: FALSE
+asStatic: FALSE

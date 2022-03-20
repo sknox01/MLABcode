@@ -1,0 +1,67 @@
+---
+title: "test"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(dplyr)
+library(plotly)
+```
+
+```{r, echo=FALSE}
+# Load data 
+
+# Inputs
+basepath <- "/Volumes/GoogleDrive/My Drive/UBC/Micromet Lab/database"
+yrs <- c(2020:2021)
+site <- "BB1"
+level <- "L3"
+outpath <- "/Users/sara/" 
+outfilename <- "test"
+vars <- select years (e.g., c("AIR_TEMP_2M","TKE"))
+#export <- 1 to save csv file
+# to output R dataframe, df <- load.export.data(basepath,yrs,site,level,vars,outpath,outfilename,export)
+
+
+```
+
+Sonic data
+=======================================================================
+
+Row 
+-----------------------------------------------------------------------
+
+### Sonic only
+
+```{r, sonic}
+
+        # draw the histogram with the specified number of bins
+        renderPlotly(
+          plot_ly(data = data, x = ~DATE, y = ~wind_speed, type = 'scatter', mode = 'markers') 
+    )
+```
+
+Temperature data
+=======================================================================
+
+Row
+-------------------------------------------------------------------
+
+### Air temperature comparison
+
+
+Row
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+

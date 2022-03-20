@@ -31,4 +31,3 @@ Prior to using the data for analyses or submitting data to AmeriFlux, use the sc
 1) Prior to running `dashboard_data_QCQA.Rmd`, make sure to create or update the init file for each site (under `init_files` folder).    
 2) Prior to running `dashboard_data_QCQA.Rmd`, make sure to update the output file name on _line 3_ (e.g., `BB2_data_QCQA.html`) **and** the name of the init file on _line 31_ (e.g., `BB2_data_QCQA.R`).    
 3) Now inspect each variable to assess if variable needs further attention.  
-

@@ -9,9 +9,10 @@ basepath <- "/Volumes/GoogleDrive/My Drive/UBC/Micromet Lab/database"
 yrs <- c(2019:2022)
 site <- "BB2"
 level <- "L3"
-vars <- c("wind_dir","wind_speed","u_","pitch","year","w_var",
-          "sonic_temperature","AIR_TEMP_2M","air_t_mean","RH_2M","RH","e","es_x","es_y",
-          "SHORTWAVE_IN","SHORTWAVE_OUT","LONGWAVE_IN","LONGWAVE_OUT","NR","INCOMING_PAR","REFLECTED_PAR")
+vars <- c("wind_dir","wind_speed","u_","pitch","year","w_var","WIND_VELOCITY_CUP","WIND_VELOCITY_EC",
+          "sonic_temperature","AIR_TEMP_2M","air_temperature","air_t_mean","RH_2M","RH","e","es_x","es_y",
+          "SHORTWAVE_IN","SHORTWAVE_OUT","LONGWAVE_IN","LONGWAVE_OUT","NR","INCOMING_PAR","REFLECTED_PAR",
+          "air_pressure","air_p_mean","PA_1_5M","PA_EC_AIR2_5M")
 export <- 0 
 
 # Create dataframe for years & variables of interest
@@ -33,7 +34,7 @@ data_visualization_path <- "/Users/sara/Code/MLABcode/data_visualization/"
 p <- sapply(list.files(pattern="[.]R$", path=data_visualization_path, full.names=TRUE), source)
 
 # Specify variables for sonic_data_plotting.R
-vars_sonic <- c("wind_dir","wind_speed","u_","pitch")
+vars_sonic <- c("wind_dir","wind_speed","u_","pitch","WIND_VELOCITY_CUP","WIND_VELOCITY_EC") # Where is WD_CUP?
 units_sonic <- c("degrees","m/s","m/s","degrees")
 pitch_ind <- 4
 
@@ -45,7 +46,7 @@ data$sonic_temperature_C <- data$sonic_temperature-273.15
 data$air_t_mean_C <- data$air_t_mean-273.15
 
 # Now specify variables
-vars_temp <- c("AIR_TEMP_2M","sonic_temperature_C","air_t_mean_C")
+vars_temp <- c("AIR_TEMP_2M","sonic_temperature_C","air_temperature","air_t_mean_C")
 
 # RH variables
 # Make sure that all temperature variables are in the same units 

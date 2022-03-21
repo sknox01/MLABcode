@@ -49,15 +49,12 @@ data$air_t_mean_C <- data$air_t_mean-273.15
 data$air_temperature_C <- data$air_temperature-273.15
 
 # Now specify variables
-vars_temp <- c("AIR_TEMP_2M","sonic_temperature_C","air_temperature","air_t_mean_C")
+vars_temp <- c("AIR_TEMP_2M","sonic_temperature_C","air_temperature_C","air_t_mean_C")
 
 # RH variables
-# Make sure that all temperature variables are in the same units 
-data$RH <- data$RH
-data$RH_7200_maybe <- data$e/data$es_x*100
 
 # Now specify variables
-vars_RH <- c("RH_2M","RH","RH_7200_maybe")
+vars_RH <- c("RH_2M","RH")
 
 # Radiation variables
 vars_radiometer <- c("SHORTWAVE_IN","SHORTWAVE_OUT","LONGWAVE_IN","LONGWAVE_OUT") # note that SW_IN and SW_OUT should always be listed as variables 1 and 2, respectively

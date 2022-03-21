@@ -21,10 +21,11 @@ library(knitr)
 
 ```{r echo=FALSE}
 # Comments/Notes
-# 1) Make variables generalizable for different variable names - USE AMERIFLUX NAMES HERE
+# 1) Make variables generalizable for different variable names - USE AMERIFLUX NAMES HERE (make sure to update plots below) - make scatterplot generalizable
 # 2) NEED TO ADD 7200, 7700 temp and 7200 RH & CHECK WHICH TEMP IS USED TO SONIC (cross wind corrected or no) ADD HERE after MEETING ON THURSDAY!
 # 3) Try to track down WD_CUP at all sites
-# 4) Remove duplicate variables (e.g., "WIND_VELOCITY_EC" = "wind_speed" -> remove "WIND_VELOCITY_EC")
+# 4) Remove duplicate variables (e.g., "WIND_VELOCITY_EC" = "wind_speed" -> remove "WIND_VELOCITY_EC";
+#air_temperature = AIR_TEMP_2M -> could remove air_temperature)
 # 5) Think about output directory (can change by replacing 'dirname(inputFile)' above)
 ```
 
@@ -79,14 +80,14 @@ Column {data-width=400}
 
 ### Temperature scatterplot
 ```{r}
-p <- scatter_plot_temp_QCQA(data,data$AIR_TEMP_2M,data$sonic_temperature-273.15,data$air_t_mean-273.15,c("sonic1","sonic2"),"AIR_TEMP_2M","Other Air Temperature")
+p <- scatter_plot_temp_QCQA(data,data$AIR_TEMP_2M,data$sonic_temperature-273.15,data$air_t_mean-273.15,c("sonic_temperature","air_t_mean"),"HMP Air temperature (°C)","Other Air Temperature (°C)")
 toWebGL(ggplotly(p))
 ```
 
 ### RH HMP vs. RH 7200
 
 ```{r}
-scatter_plot_QCQA(data,data$RH_2M,data$RH,data$year,"HMP_RH","RH")
+scatter_plot_QCQA(data,data$RH_2M,data$RH,data$year,"HMP RH","LI-7200 RH") # 
 ```
 
 

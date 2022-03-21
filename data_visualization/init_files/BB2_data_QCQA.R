@@ -34,9 +34,11 @@ data_visualization_path <- "/Users/sara/Code/MLABcode/data_visualization/"
 p <- sapply(list.files(pattern="[.]R$", path=data_visualization_path, full.names=TRUE), source)
 
 # Specify variables for sonic_data_plotting.R
-vars_sonic <- c("wind_dir","wind_speed","u_","pitch","WIND_VELOCITY_CUP","WIND_VELOCITY_EC") # Where is WD_CUP?
-units_sonic <- c("degrees","m/s","m/s","degrees")
-pitch_ind <- 4
+vars_WS <- c("wind_speed","WIND_VELOCITY_CUP")
+vars_WD <- "wind_dir"
+vars_other_sonic <- c("u_","pitch")
+units_other_sonic <- c("m/s","degrees")
+pitch_ind <- 2
 
 # Specify variables for temp_RH_data_plotting.R
 
@@ -44,6 +46,7 @@ pitch_ind <- 4
 # Make sure that all temperature variables are in the same units (e.g., Celsius)
 data$sonic_temperature_C <- data$sonic_temperature-273.15
 data$air_t_mean_C <- data$air_t_mean-273.15
+data$air_temperature_C <- data$air_temperature-273.15
 
 # Now specify variables
 vars_temp <- c("AIR_TEMP_2M","sonic_temperature_C","air_temperature","air_t_mean_C")

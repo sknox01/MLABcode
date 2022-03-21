@@ -22,10 +22,10 @@ library(knitr)
 ```{r echo=FALSE}
 # Comments/Notes
 # 1) Make variables generalizable for different variable names - USE AMERIFLUX NAMES HERE
-# 2) NEED TO ADD 7200, 7700 temp and 7200 RH & CHECK WHICH TEMP IS USED TO SONIC (cross wind corrected or no)
+# 2) NEED TO ADD 7200, 7700 temp and 7200 RH & CHECK WHICH TEMP IS USED TO SONIC (cross wind corrected or no) ADD HERE after MEETING ON THURSDAY!
 # 3) Try to track down WD_CUP at all sites
-# 4) Remove duplicate variables (e.g., wind )
-# 4) Think about output directory (can change by replacing 'dirname(inputFile)' above)
+# 4) Remove duplicate variables (e.g., "WIND_VELOCITY_EC" = "wind_speed" -> remove "WIND_VELOCITY_EC")
+# 5) Think about output directory (can change by replacing 'dirname(inputFile)' above)
 ```
 
 <!-- specify init file to read -->
@@ -47,7 +47,7 @@ Column {data-width=600}
 
 ```{r}
 # Load all plotting functions
-sonic_plots(data,vars_sonic,units_sonic,pitch_ind)
+sonic_plots(data,vars_WS,vars_WD,vars_other_sonic,units_other_sonic,pitch_ind)
 ```
 
 Column {data-width=400}

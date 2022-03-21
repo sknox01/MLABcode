@@ -9,6 +9,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+<!--Think about if I want this here or in README.md-->
+
 This document provides information and details on how to process eddy covariance and biomet data from start to finish.
 
 ## High frequency data processing 

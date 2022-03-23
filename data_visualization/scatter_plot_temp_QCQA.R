@@ -4,8 +4,12 @@
 
 # Input
 # data = dataframe with relevant variables
+# x = HMP air temperature
+# y1 = sonic temperature
+# y2 = 7700 temperature
+# xlab = x label
+# ylab = y label
 scatter_plot_temp_QCQA <- function(data,x,y1,y2,temp_name,xlab,ylab){
-  
   
   p <- ggplot(data) + 
     geom_point(aes(x, y1,color = temp_name[1]),alpha = 0.6)+
@@ -15,5 +19,5 @@ scatter_plot_temp_QCQA <- function(data,x,y1,y2,temp_name,xlab,ylab){
     labs(x = xlab)+
     labs(y = ylab)
   
-  return(p)
+  return(toWebGL(ggplotly(p)))
 }

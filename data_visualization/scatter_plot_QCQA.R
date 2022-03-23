@@ -1,9 +1,14 @@
 # Figure for data QCQA scatter plot
 # By Sara Knox
-# March 15, 2022
+# Created March 15, 2022
 
 # Input
 # data = dataframe with relevant variables
+# x = x variable name
+# y = y variable name
+# year = "year"
+# xlab = x label
+# ylab = y label
 scatter_plot_QCQA <- function(data,x,y,year,xlab,ylab){
   
   sumtbl <- summary(lm(y ~ x,data = data))

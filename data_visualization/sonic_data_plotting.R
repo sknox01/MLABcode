@@ -4,11 +4,11 @@
 
 # Input
 # data = dataframe with relevant variables
-# var_WS = wind speed variables (e.g., from sonic and cup anemometer)
+# var_WS = wind speed variables (e.g., from sonic and cup anemometer - make sure sonic data is first)
 # var_WD = wind direction variables (e.g., from sonic and cup anemometer)
-# var = other sonic variables of interest (e.g., c("wind_dir","wind_speed","u_","pitch"))
-# unit = units for variables defined in var (e.g., c("degrees","m/s","m/s","degrees"))
-# pitch_ind = index for pitch (e.g., 4)
+# var = other sonic variables of interest (e.g., c("u_","pitch") - make sure u* is first)
+# unit = units for variables defined in var (e.g., c("m/s","degrees"))
+# pitch_ind = index for pitch (e.g., 2)
 sonic_plots <- function(data,var_WS,var_WD,var,unit,pitch_ind){
   
   plots <- plot.new()

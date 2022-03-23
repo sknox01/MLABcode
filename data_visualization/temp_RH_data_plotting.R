@@ -5,7 +5,8 @@
 # Input
 # data = dataframe with relevant variables
 # data = dataframe with relevant variables
-# var_temp = temperature variables of interest (e.g., c("AIR_TEMP_2M","sonic_temperature_C","air_t_mean_C"))
+# var_temp = temperature variables of interest (e.g., c("AIR_TEMP_2M","sonic_temperature_C","air_t_mean_C")) -
+#            note variable order should be HMP, sonic temperature, 7700
 # var_RH = relative humidity variables of interest (e.g., c("RH_2M","RH"))
 temp_RH_plots <- function(data,var_temp,var_RH){
   

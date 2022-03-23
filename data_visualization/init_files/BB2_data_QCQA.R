@@ -34,11 +34,14 @@ data_visualization_path <- "/Users/sara/Code/MLABcode/data_visualization/"
 p <- sapply(list.files(pattern="[.]R$", path=data_visualization_path, full.names=TRUE), source)
 
 # Specify variables for sonic_data_plotting.R
-vars_WS <- c("wind_speed","WIND_VELOCITY_CUP")
+vars_WS <- c("wind_speed","WIND_VELOCITY_CUP") # Include sonic wind speed first
 vars_WD <- "wind_dir"
-vars_other_sonic <- c("u_","pitch")
+vars_other_sonic <- c("u_","pitch") # include u* (u_) first
 units_other_sonic <- c("m/s","degrees")
 pitch_ind <- 2
+
+# Specify other sonic variables
+wind_variance <- "w_var" # If using all variances, make sure w_var is first
 
 # Specify variables for temp_RH_data_plotting.R
 
@@ -49,15 +52,22 @@ data$air_t_mean_C <- data$air_t_mean-273.15
 data$air_temperature_C <- data$air_temperature-273.15
 
 # Now specify variables
-vars_temp <- c("AIR_TEMP_2M","sonic_temperature_C","air_temperature_C","air_t_mean_C")
+vars_temp <- c("AIR_TEMP_2M","sonic_temperature_C","air_t_mean_C") # Order should be HMP, sonic temperature, 7700 temperature
 
 # RH variables
 
 # Now specify variables
-vars_RH <- c("RH_2M","RH")
+vars_RH <- c("RH_2M","RH") # Order should be HMP then 7200
 
 # Radiation variables
 vars_radiometer <- c("SHORTWAVE_IN","SHORTWAVE_OUT","LONGWAVE_IN","LONGWAVE_OUT") # note that SW_IN and SW_OUT should always be listed as variables 1 and 2, respectively
 vars_NETRAD <- "NR"
 vars_PPFD <- c("INCOMING_PAR","REFLECTED_PAR") #Note incoming PAR should always be listed first.
-  
+
+# Pressure variables
+# Make sure that all pressure variables are in the same units (e.g., kPa)
+data$air_pressure_kPa <- data$air_pressure/1000
+data$air_p_mean_kPa <- data$air_p_mean/1000
+
+vars_pressure <- c("air_pressure_kPa","air_p_mean_kPa","PA_1_5M","PA_EC_AIR2_5M") # note that 
+

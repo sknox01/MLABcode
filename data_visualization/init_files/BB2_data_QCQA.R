@@ -12,7 +12,8 @@ level <- "L3"
 vars <- c("wind_dir","wind_speed","u_","pitch","year","w_var","WIND_VELOCITY_CUP","WIND_VELOCITY_EC",
           "sonic_temperature","AIR_TEMP_2M","air_temperature","air_t_mean","RH_2M","RH","e","es_x","es_y",
           "SHORTWAVE_IN","SHORTWAVE_OUT","LONGWAVE_IN","LONGWAVE_OUT","NR","INCOMING_PAR","REFLECTED_PAR",
-          "air_pressure","air_p_mean","PA_1_5M","PA_EC_AIR2_5M")
+          "air_pressure","air_p_mean","PA_1_5M","PA_EC_AIR2_5M",
+          "PRECIP","SHFP_1","SHFP_3","SHFP_3","SVWC")
 export <- 0 
 
 # Create dataframe for years & variables of interest
@@ -71,3 +72,14 @@ data$air_p_mean_kPa <- data$air_p_mean/1000
 
 vars_pressure <- c("air_pressure_kPa","air_p_mean_kPa","PA_1_5M","PA_EC_AIR2_5M") # note that 
 
+# Precip variables
+precip <- data$PRECIP
+
+# Soil heat flux
+vars_G <- c("SHFP_1","SHFP_3","SHFP_3")
+
+# Volumetric water content
+vars_VWC <- "SVWC"
+
+# Water and soil temperature variables - note go with decreasing height/depth from highest measurement
+vars_soil_temp <- c("WATER_TEMP_3_5CM","WATER_TEMP_2_5CM","WATER_TEMP_3_5CM","SOIL_TEMP_1_5CM") 

@@ -13,15 +13,10 @@ temp_RH_plots <- function(data,var_temp,var_RH){
   yaxlabel <- c("Air Temperature (°C)","Relative Humidity (%)")
   
   # Temperature plots
-  temp_plot <- plotly_loop(data,var_temp)%>%
-    layout(yaxis = list(title = yaxlabel[1]))%>%
-    toWebGL()
+  temp_plot <- plotly_loop(data,var_temp,yaxlabel[1])
   
-    
   # RH plots
-  RH_plot <-  plotly_loop(data,var_RH)%>%
-    layout(yaxis = list(title = yaxlabel[2]))%>%
-    toWebGL()
+  RH_plot <-  plotly_loop(data,var_RH,yaxlabel[2])
   
   p <- subplot(temp_plot,RH_plot, nrows = 2, shareX = TRUE, titleX = FALSE,titleY = TRUE)%>% layout(legend = list(orientation = 'h'))
   return(p)

@@ -13,8 +13,13 @@ vars <- c("wind_dir","wind_speed","u_","pitch","year","w_var","WIND_VELOCITY_CUP
           "sonic_temperature","AIR_TEMP_2M","air_temperature","air_t_mean","RH_2M","RH","e","es_x","es_y",
           "SHORTWAVE_IN","SHORTWAVE_OUT","LONGWAVE_IN","LONGWAVE_OUT","NR","INCOMING_PAR","REFLECTED_PAR",
           "air_pressure","air_p_mean","PA_1_5M","PA_EC_AIR2_5M",
-          "PRECIP","SHFP_1","SHFP_3","SHFP_3","SVWC")
-export <- 0 
+          "PRECIP","SHFP_1","SHFP_2","SHFP_3","SVWC",
+          "WATER_TEMP_1_5CM","WATER_TEMP_2_5CM","WATER_TEMP_3_5CM",
+          "SOIL_TEMP_1_5CM","SOIL_TEMP_1_10CM","SOIL_TEMP_1_30CM","SOIL_TEMP_1_50CM",
+          "SOIL_TEMP_2_5CM","SOIL_TEMP_2_10CM","SOIL_TEMP_2_30CM","SOIL_TEMP_2_50CM",
+          "SOIL_TEMP_3_5CM","SOIL_TEMP_3_10CM","SOIL_TEMP_3_30CM","SOIL_TEMP_3_50CM")
+
+export <- 0 # 1 to save a csv file of the data, 0 otherwise
 
 # Create dataframe for years & variables of interest
 # Path to function to load data
@@ -22,7 +27,15 @@ source("/Users/sara/Code/MLABcode/database_functions/read_database.R")
 
 data <- load.export.data(basepath,yrs,site,level,vars,export)
 
-# Remove missing data (should be -9999 so FIX eventually)
+# Make sure there are no duplicate column names & stop script if there are duplicate names
+duplicate <- !duplicated(colnames(data))
+ind_duplicate <- which(duplicate==FALSE)
+
+if(length(ind_duplicate) > 0) {
+  stop("Make sure to remove duplicate columns names in data dataframe")    
+}
+
+# Remove missing data (should be -9999)
 data <- replace(data, data == -9999, NA)
 
 # Remove empty columns for the end of the year (and start in some cases)
@@ -73,13 +86,20 @@ data$air_p_mean_kPa <- data$air_p_mean/1000
 vars_pressure <- c("air_pressure_kPa","air_p_mean_kPa","PA_1_5M","PA_EC_AIR2_5M") # note that 
 
 # Precip variables
-precip <- data$PRECIP
+precip <- "PRECIP"
 
 # Soil heat flux
-vars_G <- c("SHFP_1","SHFP_3","SHFP_3")
+vars_G <- c("SHFP_1","SHFP_2","SHFP_3")
 
 # Volumetric water content
 vars_VWC <- "SVWC"
 
 # Water and soil temperature variables - note go with decreasing height/depth from highest measurement
-vars_soil_temp <- c("WATER_TEMP_3_5CM","WATER_TEMP_2_5CM","WATER_TEMP_3_5CM","SOIL_TEMP_1_5CM") 
+vars_TS <- c("WATER_TEMP_3_5CM","WATER_TEMP_2_5CM","WATER_TEMP_3_5CM",
+                    "SOIL_TEMP_1_5CM","SOIL_TEMP_1_10CM","SOIL_TEMP_1_30CM","SOIL_TEMP_1_50CM",
+                    "SOIL_TEMP_2_5CM","SOIL_TEMP_2_10CM","SOIL_TEMP_2_30CM","SOIL_TEMP_2_50CM",
+                    "SOIL_TEMP_3_5CM","SOIL_TEMP_3_10CM","SOIL_TEMP_3_30CM","SOIL_TEMP_3_50CM") 
+
+# Specify variables for Additional meteorological variables output
+var_other <- list(as.list(vars_G),as.list(vars_TS))
+yaxlabel_other <- c("G (W/m2)","Temperature (°C)")

@@ -21,7 +21,7 @@ library(knitr)
 
 ```{r echo=FALSE}
 # Comments/Notes
-# 1) Make variables generalizable for different variable names - USE AMERIFLUX NAMES HERE (make sure to update plots below) - make scatterplot generalizable - Temperature scatterplot could be more generalizable & make line names more generalizable
+# 1) See if want to update sonic, temperature, and rad plots using multiple_plotlys
 
 # 2) NEED TO ADD 7200, 7700 temp and 7200 RH & CHECK WHICH TEMP IS USED TO SONIC (cross wind corrected or no) ADD HERE after MEETING ON THURSDAY!
 # 3) Try to track down WD_CUP at all sites
@@ -47,7 +47,6 @@ Column {data-width=600}
 ### Sonic variables and diagnostics
 
 ```{r}
-# Load all plotting functions
 sonic_plots(data,vars_WS,vars_WD,vars_other_sonic,units_other_sonic,pitch_ind)
 ```
 
@@ -138,21 +137,13 @@ Column {data-width=600}
 ### Pressure 
 ```{r}
 # Barometric pressure 
-pressure_p <- plotly_loop(data,vars_pressure)%>%
-  layout(yaxis = list(title = "Barometric pressure (units)"))%>%
-  toWebGL()
-
+plotly_loop(data,vars_pressure,"Barometric pressure (kPa)")
 ```
 
 Column {data-width=400}
 -----------------------------------------------------------------------
 
-### Pressure comparison
-```{r}
-
-```
-
-### SW_OUT vs PPFD_IN
+### Pressure comparison (Met PA vs EC PA)
 ```{r}
 
 ```
@@ -162,25 +153,10 @@ Other met {data-orientation=rows}
 Row {data-height=600}
 -------------------------------------
 
-### Chart 1
+### Additional meteorological variables
 
 ```{r}
-# wind direction plot
-  yaxlabel <- c("Wind direction (degrees)")
-  WD_plot <- plotly_loop(data,var_WD)%>%
-    layout(yaxis = list(title = yaxlabel))%>%
-    toWebGL()
-  
-  plots[[2]] <- WD_plot
-  
-  # all variables except wind speed and wind direction
-  for (i in 1:(length(var))){
-    plots[[i+2]] <- plot_ly(data, x = ~datetime, y = as.formula(paste0("~", var[i]))) %>%
-      add_lines(name = var[i])%>% 
-      layout(yaxis = list(title = unit[i]))%>%
-      toWebGL()
-  }
-  
+multiple_plotly_plots(data,var_other,yaxlabel_other)
 ```
 
 Row {data-height=400}

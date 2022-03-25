@@ -14,18 +14,14 @@ sonic_plots <- function(data,var_WS,var_WD,var,unit,pitch_ind){
   plots <- plot.new()
   
   # wind speed plot
-  yaxlabel <- c("Wind speed (m/s)")
-  WS_plot <- plotly_loop(data,var_WS)%>%
-    layout(yaxis = list(title = yaxlabel))%>%
-    toWebGL()
+  yaxlabel <- "Wind speed (m/s)"
+  WS_plot <- plotly_loop(data,var_WS,yaxlabel)
   
   plots[[1]] <- WS_plot
   
   # wind direction plot
-  yaxlabel <- c("Wind direction (degrees)")
-  WD_plot <- plotly_loop(data,var_WD)%>%
-    layout(yaxis = list(title = yaxlabel))%>%
-    toWebGL()
+  yaxlabel <- "Wind direction (degrees)"
+  WD_plot <- plotly_loop(data,var_WD,yaxlabel)
   
   plots[[2]] <- WD_plot
   

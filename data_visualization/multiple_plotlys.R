@@ -20,18 +20,21 @@ multiple_plotly_plots <- function(data,var,yaxlabel){
   
   # Loop through each variables
   for (i in 1:nvariables){
-  
-  # Plot first measurement for each variable    
-  p <- plot_ly(data, x = ~datetime, y = as.formula(paste0("~", var[[i]][1])),name = as.character(var[[i]][1]), type = 'scatter', mode = 'lines') 
-  
-  # Plot subsequent measurements for each variable
-  for (j in 1:(nmeasurements[i]-1)){
-    p <- p %>% add_trace(y = as.formula(paste0("~", var[[i]][j+1])), name = as.character(var[[i]][j+1]), mode = 'lines')
-    print(var[[i]][j+1])
+    
+    # Plot first measurement for each variable    
+    p <- plot_ly(data, x = ~datetime, y = as.formula(paste0("~", var[[i]][1])),name = as.character(var[[i]][1]), type = 'scatter', mode = 'lines') 
+    
+    if (length(var[[i]]) > 1){
+      # Plot subsequent measurements for each variable
+      for (j in 1:(nmeasurements[i]-1)){
+        p <- p %>% add_trace(y = as.formula(paste0("~", var[[i]][j+1])), name = as.character(var[[i]][j+1]), mode = 'lines')
+        print(var[[i]][j+1])
+      }
     }
-  plots[[i]] <- p%>% 
-    layout(yaxis = list(title =yaxlabel[i]))%>%
-    toWebGL()
+    
+    plots[[i]] <- p%>% 
+      layout(yaxis = list(title =yaxlabel[i]))%>%
+      toWebGL()
   }
   
   p <- subplot(plots, nrows = nvariables, shareX = TRUE, titleX = FALSE,titleY = TRUE)%>% layout(legend = list(orientation = 'h'))

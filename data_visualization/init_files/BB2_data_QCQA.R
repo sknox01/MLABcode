@@ -96,10 +96,119 @@ vars_VWC <- "SVWC"
 
 # Water and soil temperature variables - note go with decreasing height/depth from highest measurement
 vars_TS <- c("WATER_TEMP_3_5CM","WATER_TEMP_2_5CM","WATER_TEMP_3_5CM",
-                    "SOIL_TEMP_1_5CM","SOIL_TEMP_1_10CM","SOIL_TEMP_1_30CM","SOIL_TEMP_1_50CM",
-                    "SOIL_TEMP_2_5CM","SOIL_TEMP_2_10CM","SOIL_TEMP_2_30CM","SOIL_TEMP_2_50CM",
-                    "SOIL_TEMP_3_5CM","SOIL_TEMP_3_10CM","SOIL_TEMP_3_30CM","SOIL_TEMP_3_50CM") 
+             "SOIL_TEMP_1_5CM","SOIL_TEMP_1_10CM","SOIL_TEMP_1_30CM","SOIL_TEMP_1_50CM",
+             "SOIL_TEMP_2_5CM","SOIL_TEMP_2_10CM","SOIL_TEMP_2_30CM","SOIL_TEMP_2_50CM",
+             "SOIL_TEMP_3_5CM","SOIL_TEMP_3_10CM","SOIL_TEMP_3_30CM","SOIL_TEMP_3_50CM") 
 
 # Specify variables for Additional meteorological variables output
 var_other <- list(as.list(vars_G),as.list(vars_TS))
 yaxlabel_other <- c("G (W/m2)","Temperature (°C)")
+
+# define the standard meridian for Burns Bog
+Standard_meridian <- -120
+
+# Define long/lat
+long <- -122.9849
+Lat <- 49.1293
+
+# Path to function to load data
+source("/Users/sara/Code/MLABcode/potential_rad.R")
+
+potential_rad <- potential_rad(Standard_meridian,long,Lat)
+
+df <- data.frame(data$datetime, potential_rad,data$SHORTWAVE_IN)
+p <- ggplot() +
+  geom_line(data = df, aes(x = data.datetime, y = potential_rad), color = "steelblue") +
+  geom_line(data = df, aes(x = data.datetime, y = data.SHORTWAVE_IN), color = "red")
+
+ p <-      ggplotly(p) %>%
+    toWebGL()
+p
+
+# Compute mean diurnal pattern for 15 day moving window
+source("/Users/sara/Code/MLABcode/diurnal_composite_moving_window.R")
+diurnal.composite <- diurnal.composite(data$datetime,potential_rad,data$SHORTWAVE_IN,15,48)
+
+p <- ggplot() +
+  geom_point(data = diurnal.composite, aes(x = time, y = potential_radiation), color = "steelblue",size = 0.5) +
+  geom_point(data = diurnal.composite, aes(x = time, y = SW_IN), color = "red",linetype="dashed",size = 0.5) +
+  geom_point(data = diurnal.composite, aes(x = time, y = exceeds), color = "black",size = 0.75)+
+  scale_x_datetime(breaks="6 hours", date_labels = "%R")
+
+p <- ggplotly(p+ facet_wrap(~as.factor(firstdate))) %>% toWebGL()
+p
+
+# Calculate % of instances when SW_IN > potential_radiation (for daytime only)
+
+# Find daytime indices
+ind_day <- which(diurnal.composite$SW_IN > 20)
+
+# Find periods when SW_IN > potential_radiation
+ind_exceeds <- which(diurnal.composite$SW_IN[ind_day] > diurnal.composite$potential_radiation[ind_day])
+
+exceeds <- length(ind_exceeds)/length(ind_day)*100
+
+ccf_obj <- ccf(diurnal_composite$potential_radiation, diurnal_composite$SW_IN)
+
+Find_Max_CCF(diurnal_composite$potential_radiation, diurnal_composite$SW_IN)
+
+Find_Max_CCF<- function(a,b)
+{
+  d <- ccf(a, b, plot = FALSE)
+  cor = d$acf[,,1]
+  lag = d$lag[,,1]
+  res = data.frame(cor,lag)
+  res_max = res[which.max(res$cor),]
+  return(res_max)
+}
+
+# Plot diurnal pattern with moving window
+source("/Users/sara/Code/MLABcode/diurnal_pattern_moving_window.R")
+diurnal.summary <- diurnal.summary(data$datetime, data$SHFP_1, 30, 48)
+diurnal.summary.composite <- diurnal.summary %>%
+  group_by(firstdate,HHMM) %>%
+  dplyr::summarize(var = median(var, na.rm = TRUE),
+                   HHMM = first(HHMM))
+diurnal.summary.composite$time <- as.POSIXct(as.character(diurnal.summary.composite$HHMM), format="%R", tz="UTC")
+
+p <- ggplot() +
+  geom_point(data = diurnal.summary, aes(x = time, y = var),color = 'Grey',size = 0.1) +
+  geom_line(data = diurnal.summary.composite, aes(x = time, y = var),color = 'Black') +
+  scale_x_datetime(breaks="6 hours", date_labels = "%R")
+
+p <- ggplotly(p+ facet_wrap(~as.factor(firstdate))) %>% toWebGL()
+p
+
+# Long-term trend or step change
+p.SW_IN<- ggplot() +
+  geom_point(data = data, aes(x = datetime, y = SHORTWAVE_IN),color = 'Grey',size = 0.1)
+
+p.PPFD_IN <- ggplot() +
+  geom_point(data = data, aes(x = datetime, y = INCOMING_PAR),color = 'Grey',size = 0.1)
+
+p <- grid.arrange(p.SW_IN, p.PPFD_IN, # Second row with 2 plots in 2 different columns
+             nrow = 2)                       # Number of rows
+
+# Specify variables to keep
+data_keep_columns <- c("year","SHORTWAVE_IN", "INCOMING_PAR")
+
+df_subset <- data[ ,colnames(data) %in% data_keep_columns]  # Extract columns from data
+df <- na.omit(df_subset) # renove NA values
+
+data.by.year.R2 <- df %>%
+  group_by(year) %>%
+  dplyr::summarize(R2 = cor(SHORTWAVE_IN, INCOMING_PAR)^2)
+
+data.by.year.slope <- df %>%
+  group_by(year) %>% # You can add here additional grouping variables if your real data set enables it
+  do(mod = lm(SHORTWAVE_IN ~ INCOMING_PAR, data = .)) %>%
+  mutate(slope = summary(mod)$coeff[2]) %>%
+  select(-mod)
+
+data.by.year <- merge(data.by.year.R2,data.by.year.slope,by="year")
+
+# Create plot of timeseries of R2 and slope
+multivariate_comparison_trend(data.by.year)
+
+# Plot data availability
+plot_datayear(data)

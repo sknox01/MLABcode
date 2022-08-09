@@ -88,14 +88,14 @@ for (j in 1:(length(vars_stagetwo))) {
   
   df <- data.frame(datetime, var_stagetwo,var_stageone)
   colors <- c("stage one" = "red", "stage two" = "steelblue")
-
+  
   p <- ggplot() + 
     geom_point(data = df, aes(x = datetime, y = var_stageone, color = "stage one")) +
     geom_point(data = df, aes(x = datetime, y = var_stagetwo, color = "stage two")) +
     ylab(var_stagetwo_name) +  xlab("Date") +
     scale_color_manual(values = colors)+
     theme(legend.position="top",
-        legend.title=element_blank())
+          legend.title=element_blank())
   
   # p <-      ggplotly(p) %>%
   #    toWebGL()
@@ -119,8 +119,12 @@ plots
 
 ## Flux
 ```{r create plots flux,echo=FALSE,warning=FALSE,message=FALSE,results='hide',fig.show='hide'}
-# This is our external R script for a quick visualization of the first stage data
+# This is our external R script for a quick visualization of the second stage data
 # Could make fancier with shiny
+
+# List all files in met 'StageOne' 
+vars_stageone_met <-  list.files(paste0(basepath,"/",yrs,"/",site,"/","Met","/clean",sep = ""))
+
 basepath <- "/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database"
 
 yrs <- c(2022)
@@ -145,10 +149,10 @@ datetime <- lubridate::round_date(datetime, "30 minutes")
 plots <- plot.new()
 for (j in 1:(length(vars_stagetwo))) { 
   
-  # Load stagetwo trace
+  # Load stage two trace
   var_stagetwo_name <- vars_stagetwo[j]
   
-  # Skip tv varibles
+  # Skip tv variables
   if (var_stagetwo_name == "clean_tv") next
   
   setwd(wd_stagetwo)
@@ -161,46 +165,56 @@ for (j in 1:(length(vars_stagetwo))) {
   # Load original trace
   ind <- which(vars_stageone == var_stagetwo_name)
   
-  # skip variable if it's not in stage one
-  if (length(ind) == 0) next
-  
-  var_stageone_name <- vars_stageone[ind]
-  #var_orig_name <- paste0("var_name_mapping$Orig_db_name_",level[i],sep = "")[ind]
-  
-  print(paste0('stage one name = ',var_stageone_name, ' stage two name = ',var_stagetwo_name ,sep = ''))
-  
-  setwd(wd_stageone) # If getting error 'cannot change working directory', make sure you are connected to vinimet
-  var_stageone <- readBin(var_stageone_name,numeric(),n = 18000,size = 4)
-  
-  # Replace NaN with NA
-  ind <- is.nan(var_stageone) 
-  var_stageone[ind] <- NA
-  
-  
-  df <- data.frame(datetime, var_stagetwo,var_stageone)
-  colors <- c("stage one" = "red", "stage two" = "steelblue")
-
-  p <- ggplot() + 
-    geom_point(data = df, aes(x = datetime, y = var_stageone, color = "stage one")) +
-    geom_point(data = df, aes(x = datetime, y = var_stagetwo, color = "stage two")) +
-    ylab(var_stagetwo_name) +  xlab("Date") +
-    scale_color_manual(values = colors)+
-    theme(legend.position="top",
-        legend.title=element_blank())
-  
-  # p <-      ggplotly(p) %>%
-  #    toWebGL()
-  
-  # 
-  # p <- plot_ly(data = df, x = ~datetime, y = ~var_clean, name = 'clean trace', type = 'scatter', mode = 'markers') %>%
-  #   add_trace(y = ~var_orig, name = 'original trace', type = 'scatter', mode = 'markers') %>%
-  #   layout(yaxis = list(title = var_clean_name))%>%
-  #   toWebGL()
-  
-  plots[[j]] <- p#%>% 
-  #layout(yaxis = list(title =yaxlabel[i]))%>%
-  #toWebGL()
-  graphics.off()
+  # plot only stage two data if stage one data isn't available (and the variable is a flux variable), else plot stage one and stage two data
+  if (length(ind) == 0 & length(which(vars_stageone_met == var_stagetwo_name)) == 0) {
+    
+    p <- ggplot() + 
+      geom_point(data = df, aes(x = datetime, y = var_stagetwo)) +
+      ylab(var_stagetwo_name) +  xlab("Date") 
+    
+    plots[[j]] <- p
+    graphics.off()
+    
+  } else if (length(ind) != 0)  {
+    
+    var_stageone_name <- vars_stageone[ind]
+    #var_orig_name <- paste0("var_name_mapping$Orig_db_name_",level[i],sep = "")[ind]
+    
+    print(paste0('stage one name = ',var_stageone_name, ' stage two name = ',var_stagetwo_name ,sep = ''))
+    
+    setwd(wd_stageone) # If getting error 'cannot change working directory', make sure you are connected to vinimet
+    var_stageone <- readBin(var_stageone_name,numeric(),n = 18000,size = 4)
+    
+    # Replace NaN with NA
+    ind <- is.nan(var_stageone) 
+    var_stageone[ind] <- NA
+    
+    
+    df <- data.frame(datetime, var_stagetwo,var_stageone)
+    colors <- c("stage one" = "red", "stage two" = "steelblue")
+    
+    p <- ggplot() + 
+      geom_point(data = df, aes(x = datetime, y = var_stageone, color = "stage one")) +
+      geom_point(data = df, aes(x = datetime, y = var_stagetwo, color = "stage two")) +
+      ylab(var_stagetwo_name) +  xlab("Date") +
+      scale_color_manual(values = colors)+
+      theme(legend.position="top",
+            legend.title=element_blank())
+    
+    # p <-      ggplotly(p) %>%
+    #    toWebGL()
+    
+    # 
+    # p <- plot_ly(data = df, x = ~datetime, y = ~var_clean, name = 'clean trace', type = 'scatter', mode = 'markers') %>%
+    #   add_trace(y = ~var_orig, name = 'original trace', type = 'scatter', mode = 'markers') %>%
+    #   layout(yaxis = list(title = var_clean_name))%>%
+    #   toWebGL()
+    
+    plots[[j]] <- p#%>% 
+    #layout(yaxis = list(title =yaxlabel[i]))%>%
+    #toWebGL()
+    graphics.off()
+  }
 }
 ```
 

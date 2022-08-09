@@ -1,5 +1,5 @@
 ---
-title: "DSM_data_firststage"
+title: "DSM_data_secondstage"
 author: "Sara Knox"
 output: html_document
 ---
@@ -19,7 +19,6 @@ opts_knit$set(root.dir = "/Users/sara/Code/MLABcode/data_visualization") # Speci
 
 # Ideas for improvement
 # 1) Units for ylabel
-# 2) Legend (orig vs filtered)
 # 3) Interactive plots (especially for fluxes)
 ```
 

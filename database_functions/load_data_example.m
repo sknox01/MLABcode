@@ -12,6 +12,24 @@ else
     tv=read_bor(fullfile(pth,num2str(Year),siteID,'Met/clean',var),8,[],Year);
 end
 
+var = 'FC';
+
+FC=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);
+
+var = 'SC';
+
+SC=read_bor(fullfile(pth,num2str(Year),siteID,'Flux/clean',var),[],[],Year);
+
+var = 'NEE';
+
+NEE=read_bor(fullfile(pth,num2str(Year),siteID,'clean/SecondStage',var),[],[],Year);
+
+%NEE = sum([FC,SC],2,'omitnan');
+%NEE(all(isnan(FC)&isnan(SC),2)) = NaN;
+
+plot(tv, [FC, SC, NEE])
+
+
 var = 'TA_1_1_1';
 
 TA_1_1_1=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);

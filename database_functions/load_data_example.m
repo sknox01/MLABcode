@@ -3,7 +3,7 @@
 siteID = 'DSM';
 pth = '/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database';
 SecondStage = 'clean/SecondStage';
-Year = 2022;
+Year = 2021;
 
 var = 'clean_tv';
 if strcmp(siteID,'DSM')||strcmp(siteID,'RBM')
@@ -12,13 +12,18 @@ else
     tv=read_bor(fullfile(pth,num2str(Year),siteID,'Met/clean',var),8,[],Year);
 end
 
+var = 'TA_1_1_1';
+
+TA=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);
+plot(tv, TA)
+
 var = 'FC';
 
 FC=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);
 
-var = 'SC';
+var = 'FCH4_PI_F_RF';
 
-SC=read_bor(fullfile(pth,num2str(Year),siteID,'Flux/clean',var),[],[],Year);
+FCH4=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);
 
 var = 'NEE';
 
@@ -28,6 +33,22 @@ NEE=read_bor(fullfile(pth,num2str(Year),siteID,'clean/SecondStage',var),[],[],Ye
 %NEE(all(isnan(FC)&isnan(SC),2)) = NaN;
 
 plot(tv, [FC, SC, NEE])
+
+siteID = 'DSM';
+pth = '/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database';
+SecondStage = 'clean/ThirdStage';
+Year = 2022;
+
+var = 'clean_tv';
+if strcmp(siteID,'DSM')||strcmp(siteID,'RBM')
+    tv=read_bor(fullfile(pth,num2str(Year),siteID,'clean/ThirdStage',var),8,[],Year);
+else
+    tv=read_bor(fullfile(pth,num2str(Year),siteID,'clean/ThirdStage',var),8,[],Year);
+end
+
+var = 'test';
+
+test=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);
 
 
 var = 'TA_1_1_1';

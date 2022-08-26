@@ -75,7 +75,7 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
     #+++ Initalize R5 reference class sEddyProc for post-processing of eddy data
     #+++ with the variables needed for post-processing later
     EProc <- sEddyProc$new(
-      site, EddyDataWithPosix, c('NEE','LE','H','FCH4','Rg','Tair','VPD', 'Ustar')) 
+      site, EddyDataWithPosix, c('NEE','FC','LE','H','FCH4','Rg','Tair','VPD', 'Ustar')) 
     
     # Here we only use three ustar scenarios - for full uncertainty estimates, use the UNCERTAINTY SCRIPT (or full vs. fast run - as an option in ini)
     if (Ustar_scenario == 'full') { 
@@ -97,6 +97,7 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
     
     # Gap-filling
     EProc$sMDSGapFillUStarScens('NEE')
+    EProc$sMDSGapFillUStarScens('FC')
     EProc$sMDSGapFillUStarScens('LE')
     EProc$sMDSGapFillUStarScens('H')
     EProc$sMDSGapFillUStarScens('FCH4')

@@ -17,13 +17,13 @@ long <- -69.2836 # Site longitude
 export <- 0 # 1 to save a csv file of the data, 0 otherwise
 
 # Specify variables only relevant variables for input into REddyProc 
-col_order <- c("year","DOY","HHMM","NEE","LE","H","FCH4","SW_IN_1_1_1","TA_1_1_1","RH_1_1_1","VPD_1_1_1","USTAR")
+col_order <- c("year","DOY","HHMM","NEE","FC","LE","H","FCH4","SW_IN_1_1_1","TA_1_1_1","RH_1_1_1","VPD_1_1_1","USTAR")
 
 # Specify variable names in REddyProc
-var_names<-c('Year','DoY','Hour','NEE','LE','H','FCH4','Rg','Tair','rH','VPD','Ustar')
+var_names<-c('Year','DoY','Hour','NEE','FC','LE','H','FCH4','Rg','Tair','rH','VPD','Ustar')
 
 #Specify units to use in REddyPro input file
-UNITS<-list('-','-','-','umol_m-2_s-1','Wm-2','Wm-2','nmol_m-2_s-1','Wm-2','degC','%','hPa','ms-1')
+UNITS<-list('-','-','-','umol_m-2_s-1','umol_m-2_s-1','Wm-2','Wm-2','nmol_m-2_s-1','Wm-2','degC','%','hPa','ms-1')
 
 # Specify names for ThirdStage_REddyScript
 level_REddyProc <- 'REddyProc_RF'
@@ -35,8 +35,8 @@ Ustar_scenario <- 'full' # use 'full' or 'fast'
 
 # Define variables to save in third stage
 level_out <- "clean/ThirdStage"
-vars_third_stage_REddyProc <- c('GPP_uStar_f','GPP_DT_uStar','NEE_uStar_orig','NEE_uStar_f','LE_uStar_orig','LE_uStar_f','H_uStar_orig','H_uStar_f','FCH4_uStar_orig','FCH4_uStar_f','Reco_uStar','Reco_DT_uStar')
-vars_names_third_stage <- c('GPP_PI_F_NT','GPP_PI_F_DT','NEE','NEE_PI_F_MDS','LE','LE_PI_F_MDS','H','H_PI_F_MDS','FCH4','FCH4_PI_F_MDS','Reco_PI_F_NT','Reco_PI_F_DT')
+vars_third_stage_REddyProc <- c('GPP_uStar_f','GPP_DT_uStar','NEE_uStar_orig','NEE_uStar_f','FC_uStar_orig','FC_uStar_f','LE_uStar_orig','LE_uStar_f','H_uStar_orig','H_uStar_f','FCH4_uStar_orig','FCH4_uStar_f','Reco_uStar','Reco_DT_uStar')
+vars_names_third_stage <- c('GPP_PI_F_NT','GPP_PI_F_DT','NEE','NEE_PI_F_MDS','FC','FC_PI_F_MDS','LE','LE_PI_F_MDS','H','H_PI_F_MDS','FCH4','FCH4_PI_F_MDS','Reco_PI_F_NT','Reco_PI_F_DT')
 
 # Gap-filling FCH4 
 fill_RF_FCH4 <- 1 # 0 (no) or 1 (yes) to fill FCH4 and long gaps with RF from Kim et al., 2019 GCB 

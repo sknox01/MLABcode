@@ -6,11 +6,6 @@
 # ini_file_name <- name of your ini file (e.g., "DSM_StageThree_ini.R")
 # ini_path <- path to the ini file (e.g., "/Users/sara/Code/MLABcode/database_functions/ini_files/")
 
-# NOTES:
-# 2) Need to generalize to be able to run over multiple years
-# 3) Add CH4 and RF gap-filling
-# 4) Create uncertainty script
-
 StageThree_REddyProc <- function(ini_file_name,ini_path) {
   
   # Load libraries

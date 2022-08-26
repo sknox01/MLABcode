@@ -9,7 +9,7 @@ basepath <- "/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database" # Speci
 yrs <- c(2021,2022) # for multiple years use c(year1,year2)
 site <- "DSM"
 level_in <- "clean/SecondStage" #which folder you are loading variables from
-vars <- c("NEE","LE","H","FCH4","SW_IN_1_1_1","TA_1_1_1","RH_1_1_1","VPD_1_1_1","USTAR") 
+vars <- c("NEE","FC","LE","H","FCH4","SW_IN_1_1_1","TA_1_1_1","RH_1_1_1","VPD_1_1_1","USTAR") 
 tv_input <- "clean_tv"
 lat <- -12.8314 # Site latitude
 long <- -69.2836 # Site longitude

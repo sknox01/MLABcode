@@ -3,31 +3,18 @@
 # By Sara Knox
 # Aug 26, 2022
 
-# Inputs 
-# ini_file_name <- name of your ini file (e.g., "DSM_StageThree_ini.R")
-# ini_path <- path to the ini file (e.g., "/Users/sara/Code/MLABcode/database_functions/ini_files/")
+# NOTES:
+# 1) Could create as a function
+# 2) Generalize to loop over years
+# 3) Add daytime partitioning
 
-#paths
-fx_path <- "/Users/sara/Code/MLABcode/database_functions/" # Specify path for loading functions
-basepath <- "/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database" # Specify base path
-
-# Specify data path, years, level, and variables 
-yrs <- c(2021,2022) # for multiple years use c(year1,year2)
-site <- "DSM"
-level_in <- "REddyProc_RF" #which folder you are loading variables from
-vars <- list.files(path = paste(basepath,"/",yrs[1],"/",site,"/",level_in,sep = "")) # Assumes variables are the same for all years
-tv_input <- "clean_tv"
-start_dates <- as.Date("2021-09-04") # GENERALIZE TO LOOP OVER MULTIPLE YEARS
-end_dates <- as.Date("2022-09-04") # GENERALIZE TO LOOP OVER MULTIPLE YEARS
-
-export <- 0 # 1 to save a csv file of the data, 0 otherwise
+# Make sure to create ini file first
 
 # Load required libraries
 library("dplyr")
 library("lubridate")
 
-# Load ini file - create ini file
-#source(paste(ini_path,ini_file_name,sep = ""))
+# Run ini file first 
 
 # Read function for loading data
 p <- sapply(list.files(pattern="read_database.R", path=fx_path, full.names=TRUE), source)
@@ -35,9 +22,6 @@ p <- sapply(list.files(pattern="read_database.R", path=fx_path, full.names=TRUE)
 # Loop through each year
 df <- data.frame()
 for (j in 1:length(yrs)) {
-  
-  # Load ini file
- # source(paste(ini_path,ini_file_name,sep = ""))
   
   # Create data frame for years & variables of interest to import into REddyProc
   df.now <- load.export.data(basepath,yrs[j],site,level_in,vars,tv_input,export)
@@ -82,7 +66,6 @@ resRand <- data %>% summarise(
   , sdMean = sqrt(varMean) 
   , sdMeanApprox = mean(NEE_orig_sd, na.rm = TRUE) / sqrt(!!nEff - 1)
 ) %>% select(NEEagg, sdMean, sdMeanApprox)
-resRand
 
 # can also compute Daily aggregation -> but not done here.
 
@@ -95,36 +78,33 @@ NEEagg <- colMeans(data[ ,column_name], na.rm=T)
 
 #compute uncertainty across aggregated values
 sdNEEagg_ustar <- sd(NEEagg)
-sdNEEagg_ustar
 
 # Combined aggregated uncertainty
 
 #Assuming that the uncertainty due to unknown u*threshold is independent from the random uncertainty, the variances add.
 NEE_sdAnnual <- data.frame(
-  sdRand = resRand$sdMean,
-  sdUstar = sdNEEagg_ustar,
-  sdComb = sqrt(resRand$sdMean^2 + sdNEEagg_ustar^2) 
+  sd_NEE_Rand = resRand$sdMean,
+  sd_NEE_Ustar = sdNEEagg_ustar,
+  sd_NEE_Comb = sqrt(resRand$sdMean^2 + sdNEEagg_ustar^2) 
 )
 
-data.mean_NEE_uStar_f <- data.frame(mean(data$NEE_uStar_f, na.rm = TRUE)_
+data.mean_NEE_uStar_f <- data.frame(mean(data$NEE_uStar_f, na.rm = TRUE))
+colnames(data.mean_NEE_uStar_f) <- 'mean_NEE_uStar_f'
+NEE_sdAnnual <- cbind(data.mean_NEE_uStar_f,NEE_sdAnnual)
 
-# Convert to annual sums
-conv <- 
+# GPP uncertainty (only u* for now) - Night time for now
+# u* threshold uncertainty
+ind <- which(grepl("GPP_U*", names(data)) & grepl("_f$", names(data)))
+column_name <- names(data)[ind] 
 
-# GPP uncertainty (only u* for now)
-computeMeanGPP <- function(ds, suffix){
-  column_name <- paste0("GPP_",suffix,"_f")
-  mean(ds[[column_name]],na.rm = TRUE) # REMOVE na.rm = TRUE
-}
-#FilledEddyData <- EProc$sExportResults()
-GPPagg <- unlist(EProc$sApplyUStarScen(computeMeanGPP, data))
-GPPagg
+#calculate column means of specific columns
+GPPagg <- colMeans(data[ ,column_name], na.rm=T)
 
 #compute uncertainty across aggregated values
-sdGPPagg_ustar <- sd(GPPagg)
-sdGPPagg_ustar
+sd_GPP_Ustar <- sd(GPPagg)
+sd_GPP_Ustar <- data.frame(sd_GPP_Ustar)
 
-# Reco uncertainty (only u* for now)
+# Reco uncertainty (only u* for now) - night time for now
 # Rename column names to compute uncertainty
 col_indx <- grep(pattern = '^Reco_U.*', names(data))
 for (i in 1:length(col_indx)) {
@@ -132,18 +112,32 @@ for (i in 1:length(col_indx)) {
     paste(colnames(data)[col_indx[i]], "_f", sep = "")
 }
 
-computeMeanReco <- function(ds, suffix){
-  column_name <- paste0("Reco_",suffix,"_f")
-  mean(ds[[column_name]],na.rm = TRUE) # REMOVE na.rm = TRUE
-}
-#FilledEddyData <- EProc$sExportResults()
-Recoagg <- unlist(EProc$sApplyUStarScen(computeMeanReco, data))
-Recoagg
+ind <- which(grepl("Reco_U*", names(data)) & grepl("_f$", names(data)))
+column_name <- names(data)[ind] 
+
+#calculate column means of specific columns
+Recoagg <- colMeans(data[ ,column_name], na.rm=T)
 
 #compute uncertainty across aggregated values
-sdRecoagg_ustar <- sd(Recoagg,na.rm = TRUE) # Figure out with uStar mean is NA...
-sdRecoagg_ustar
+sd_Reco_Ustar <- sd(Recoagg)
+sd_Reco_Ustar <- data.frame(sd_Reco_Ustar)
 
-# Next convert means to annual sums
+# Create output data frame
+mean_sdAnnual <- NEE_sdAnnual %>%
+  mutate(mean_GPP_uStar_f = mean(data$GPP_uStar_f, na.rm = TRUE),
+         sd_GPP_Ustar = sd_GPP_Ustar,
+         mean_Reco_uStar_f = mean(data$Reco_uStar, na.rm = TRUE),
+         sd_Reco_Ustar = sd_Reco_Ustar)
+mean_sdAnnual
 
-# CREATE OUTPUT
+# Convert to annual sums
+conv_gCO2 <- 1/(10^6)*44.01*60*60*24*length(data$NEE_uStar_f)/48 # Converts umol to mol, mol to gCO2, x seconds in a year
+conv_gC <- 1/(10^6)*12.011*60*60*24*length(data$NEE_uStar_f)/48 # Converts umol to mol, mol to gCO2, x seconds in a year
+
+# g CO2
+mean_sdAnnual_gCO2 <- mean_sdAnnual*conv_gCO2
+mean_sdAnnual_gCO2
+
+# g C
+mean_sdAnnual_gC <- mean_sdAnnual*conv_gC
+mean_sdAnnual_gC

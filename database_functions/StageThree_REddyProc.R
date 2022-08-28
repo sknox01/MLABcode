@@ -179,6 +179,13 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
       writeBin(as.numeric(gap_filled_FCH4[,1]), vars_third_stage_RF_FCH4, size = 4)
     }
     
+    # Copy over clean_tv to REddyProc_RF
+    # set wd to third stage
+    out_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/",level_out, sep = "")
+    setwd(out_path)
+    
+    file.copy("clean_tv",paste(basepath,"/",as.character(yrs[j]),"/",site,"/REddyProc_RF",sep = ""),overwrite = TRUE)
+    
     rm(list=setdiff(ls(), c("ini_file_name","ini_path","load.export.data")))    
   }
 }

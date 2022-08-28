@@ -75,6 +75,10 @@ load.export.data <-
           if (vars[k] %in% list.files(inpath)) {
             # If the variable is included in the current level
             
+            # Skip the data_EP.txt file
+            if (grepl(".txt$", vars[k])) next 
+            if (grepl("clean_tv", vars[k])) next 
+            
             data <-
               data.frame(readBin(vars[k], numeric(), n = 18000, size = 4))
             colnames(data) <- vars[k]

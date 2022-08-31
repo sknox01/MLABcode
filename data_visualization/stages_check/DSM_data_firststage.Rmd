@@ -137,7 +137,7 @@ plots
 # This is our external R script for a quick visualization of the first stage data
 # Could make fancier with shiny
 
-yrs <- c(2022)
+yrs <- c(2021,2022)
 site <- "DSM"
 level <- c("Flux")
 
@@ -179,10 +179,10 @@ for (j in 1:(length(vars_clean))) {
     var_clean <- readBin(var_clean_name,numeric(),n = 18000,size = 4)
     
     # Replace -9999 with NA
-    if (length(which(var_clean == -9999)) > 0) {
-      ind_rep <- which(var_clean == -9999)
-      var_clean[ind_rep] <- NA
-    }
+    # if (length(which(var_clean == -9999)) > 0) {
+    #   ind_rep <- which(var_clean == -9999)
+    #   var_clean[ind_rep] <- NA
+    # }
     
     # Replace NaN with NA
     ind <- is.nan(var_clean) 
@@ -207,7 +207,7 @@ for (j in 1:(length(vars_clean))) {
     }
     
     # Apply unit conversions
-    var_orig <- var_orig*var_name_mapping$Slope[ind] + var_orig*var_name_mapping$Offset[ind]
+    var_orig <- var_orig*var_name_mapping$Slope[ind] + var_name_mapping$Offset[ind]
     
     # Replace NaN with NA
     ind <- is.nan(var_orig) 

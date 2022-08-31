@@ -1,10 +1,10 @@
 % Load data example
 
 siteID = 'DSM';
-%pth = '/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database';
-pth = '/Volumes/Projects/Database/';
-Stage = 'Flux';
 Year = 2022;
+
+pth = '/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database';
+Stage = 'Flux/clean';
 
 var = 'clean_tv';
 if strcmp(siteID,'DSM')||strcmp(siteID,'RBM')
@@ -13,11 +13,35 @@ else
     tv=read_bor(fullfile(pth,num2str(Year),siteID,'Met/clean',var),8,[],Year);
 end
 
+pth = '/Volumes/Projects/Database/';
+Stage = 'Flux';
+
+var = 'sonic_temperature';
+T_SONIC=read_bor(fullfile(pth,num2str(Year),siteID,Stage,var),[],[],Year);
+plot(tv, T_SONIC)
+
+pth = '/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database';
+Stage = 'Flux/clean';
+
+var = 'T_SONIC';
+T_SONIC=read_bor(fullfile(pth,num2str(Year),siteID,Stage,var),[],[],Year);
+plot(tv, T_SONIC)
+
 var = 'H';
 H=read_bor(fullfile(pth,num2str(Year),siteID,Stage,var),[],[],Year);
 plot(tv, H)
 
-var = 'spikes_hf_5';
+var = 'CH4_MIXING_RATIO';
+CH4_MIXING_RATIO=read_bor(fullfile(pth,num2str(Year),siteID,Stage,var),[],[],Year);
+plot(tv, CH4_MIXING_RATIO)
+
+
+
+
+
+
+
+var = 'LE';
 spikes_hf_5=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);
 
 plot(tv, spikes_hf_5)

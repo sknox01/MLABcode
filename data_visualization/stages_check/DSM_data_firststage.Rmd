@@ -76,7 +76,7 @@ for (j in 1:(length(vars_clean))) {
     
     # Skip variables that aren't in both folders
     if (var_clean_name == "clean_tv" | grepl('ECCC$', var_clean_name)| grepl('^RBM', 
-    var_clean_name)) next
+                                                                             var_clean_name)) next
     
     setwd(wd_clean)
     var_clean <- readBin(var_clean_name,numeric(),n = 18000,size = 4)
@@ -178,21 +178,33 @@ for (j in 1:(length(vars_clean))) {
     setwd(wd_clean)
     var_clean <- readBin(var_clean_name,numeric(),n = 18000,size = 4)
     
+    # Replace -9999 with NA
+    if (length(which(var_clean == -9999)) > 0) {
+      ind_rep <- which(var_clean == -9999)
+      var_clean[ind_rep] <- NA
+    }
+    
     # Replace NaN with NA
     ind <- is.nan(var_clean) 
     var_clean[ind] <- NA
     
     # Load original trace
-    ind <- which(var_name_mapping$Name_in_db_clean == var_clean_name) #CHECK!!!
+    ind <- which(var_name_mapping$Name_in_db_clean == var_clean_name) 
     var_orig_name <- var_name_mapping$Orig_db_name_flux[ind]
     #var_orig_name <- paste0("var_name_mapping$Orig_db_name_",level[i],sep = "")[ind]
     
     if (length(var_orig_name) == 0) next
     
-    print(paste0('orig name = ',var_orig_name, '| clean name = ',var_clean_name ,sep = ''))
+    print(paste0('orig name = ',var_orig_name, ' | clean name = ',var_clean_name ,sep = ''))
     
     setwd(wd_orig) # If getting error 'cannot change working directory', make sure you are connected to vinimet
     var_orig <- readBin(var_orig_name,numeric(),n = 18000,size = 4)
+    
+    # Replace -9999 with NA
+    if (length(which(var_orig == -9999)) > 0) {
+      ind_rep <- which(var_orig == -9999)
+      var_orig[ind_rep] <- NA
+    }
     
     # Apply unit conversions
     var_orig <- var_orig*var_name_mapping$Slope[ind] + var_orig*var_name_mapping$Offset[ind]
@@ -205,7 +217,8 @@ for (j in 1:(length(vars_clean))) {
     l[[i]] <- df.now
   }
   
-  if (length(var_orig_name) == 0) next  
+  if (length(var_orig_name) == 0) next 
+  if (var_clean_name == "clean_tv") next
   k <- k+1
   print(k)
   

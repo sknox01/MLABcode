@@ -1,9 +1,10 @@
 % Load data example
 
 siteID = 'DSM';
-pth = '/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database';
-SecondStage = 'clean/SecondStage';
-Year = 2021;
+%pth = '/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database';
+pth = '/Volumes/Projects/Database/';
+Stage = 'Flux';
+Year = 2022;
 
 var = 'clean_tv';
 if strcmp(siteID,'DSM')||strcmp(siteID,'RBM')
@@ -12,15 +13,20 @@ else
     tv=read_bor(fullfile(pth,num2str(Year),siteID,'Met/clean',var),8,[],Year);
 end
 
-var = 'TA_1_1_1';
+var = 'H';
+H=read_bor(fullfile(pth,num2str(Year),siteID,Stage,var),[],[],Year);
+plot(tv, H)
 
-TA=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);
-plot(tv, TA)
+var = 'spikes_hf_5';
+spikes_hf_5=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);
 
-var = 'FC';
+plot(tv, spikes_hf_5)
 
-FC=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);
+var = 'FCH4';
 
+FCH4=read_bor(fullfile(pth,num2str(Year),siteID,'clean/ThirdStage',var),[],[],Year);
+
+ind = find(spikes_hf_2 == 1);
 var = 'FCH4_PI_F_RF';
 
 FCH4=read_bor(fullfile(pth,num2str(Year),siteID,SecondStage,var),[],[],Year);

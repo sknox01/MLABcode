@@ -22,8 +22,8 @@ col_order <- c("year","DOY","HHMM","NEE","FC","LE","H","FCH4","SW_IN_1_1_1","TA_
 # Specify variable names in REddyProc
 var_names<-c('Year','DoY','Hour','NEE','FC','LE','H','FCH4','Rg','Tair','rH','VPD','Ustar')
 
-#Specify units to use in REddyPro input file
-UNITS<-list('-','-','-','umol_m-2_s-1','umol_m-2_s-1','Wm-2','Wm-2','nmol_m-2_s-1','Wm-2','degC','%','hPa','ms-1')
+#Note that units should be the following:
+#UNITS<-list('-','-','-','umol_m-2_s-1','umol_m-2_s-1','Wm-2','Wm-2','nmol_m-2_s-1','Wm-2','degC','%','hPa','ms-1')
 
 # Specify names for ThirdStage_REddyScript
 level_REddyProc <- 'REddyProc_RF'
@@ -50,7 +50,15 @@ predictors_FCH4 <- c("FCH4", "USTAR","NEE_PI_F_MDS","LE_PI_F_MDS","H_PI_F_MDS","
 plot_RF_results <- 0
 vars_third_stage_RF_FCH4 <- c('FCH4_PI_F_RF')
 
-# Gap-filling and long gaps with RF (add later!!)
+# Gap-filling long gaps with RF (add later!!)
 
-# Remove all non-relevant variables needed to run StageThree script
-# rm(vars,var_names,min, col_order)
+# Variables to copy from Second to Third stage- see second stage ini file for variable description
+copy_vars <- c('TA_1_1_1','TA_1_2_1','RH_1_1_1','RH_1_2_1','VPD_1_1_1','PA_1_1_1','P_1_1_1','WS_1_1_1','WD_1_1_1',
+               'wind_speed','wind_dir','DO_1_1_1','DOperc_1_1_1','COND_WATER_1_1_1','WTD_1_1_1','ORP_1_1_1',
+               'pH_1_1_1','TW_1_1_1','CO2','H2O','CH4','SW_IN_1_1_1','SW_OUT_1_1_1','LW_IN_1_1_1','LW_OUT_1_1_1',
+               'NETRAD_1_1_1','ALB_1_1_1','PPFD_IN_1_1_1','PPFD_OUT_1_1_1','PPFD_IN_2_1_1','PPFD_DIF_1_1_1',
+               'PRI_1_1_1','NDVI_1_1_1','TS_1','TS_2','TS_3','TS_4','G_1','USTAR','SLE','SH','SCH4','SC',
+               'TKE','L','U_SIGMA','V_SIGMA','W_SIGMA','TAU','zdL')
+
+# Add R functions to for: 'aerodynamic_resistance_momentum', 'aerodynamic_resistance_scalar','surface_conductance','specific_humidity'
+

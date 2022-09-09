@@ -8,16 +8,13 @@
 # predictor_vars <- variable used to predict (e.g., c('NEE','TA_1_1_1',...))
 # plot_results <- 0 = no plots and tables, 1 = plot results (figure & tables)
 # datetime <- datetime variable (e.g., data_RF$datetime)
-# year_of_interest <- year you are looping through in j (e.g., yrs[j])
-# years_all <- all years specified in the ini file
-
 
 # install required libraries
 #install.packages('tidyverse') # for data wrangling 
 #install.packages('caret') # for machine learning run and tuning
 #install.packages('randomForest') # randomforest model
 
-RF_gf <- function(df,fill_var,predictor_vars,plot_results,datetime,year_of_interest,years_all) {
+RF_gf <- function(df,fill_var,predictor_vars,plot_results,datetime) {
   
   # load libraries
   library(tidyverse)
@@ -36,64 +33,42 @@ RF_gf <- function(df,fill_var,predictor_vars,plot_results,datetime,year_of_inter
   var_dep <- fill_var
   vars_reorder <- c(var_dep,vars_indep) 
   
-  if (year_of_interest == first(yrs)) {
-    # Truncate data set to remove all NA values at the start
-    # Find first non-NA data point
-    data_first <- sapply(ML.df.all, function(x) x[min(which(!is.na(x)))])
-    
-    # See what index that corresponds too
-    ind_first <- rep(NA, length(data_first))
-    for (i in 1:length(data_first)) {
-      ind_first[i] <- head(which(ML.df.all[,i] == data_first[[i]]),n=1)
-    }
-    
-    # Find last first-NaN data point
-    ind_start <- min(ind_first)
-    
-    # create subset of data excluding NAs at the end of the time series
-    ML.df <- ML.df.all[ind_start:length(datetime), ] 
-    
-    # Create time variables & sine and cosine functions
-    df <- df[ind_start:length(datetime), ] 
-    df$DOY <- yday(df$datetime)
-    ML.df <- ML.df %>%
-      mutate(s = sin((df$DOY-1)/365*2*pi), # Sine function to represent the seasonal cycle
-             c = cos((df$DOY-1)/365*2*pi)) # cosine function to represent the seasonal cycle
-    
-  } else if (year_of_interest == last(yrs)) {
-    # Truncate data set to remove future time steps
-    # Find last non-NA data point
-    data_last <- sapply(ML.df.all, function(x) x[max(which(!is.na(x)))])
-    
-    # See what index that corresponds too
-    ind_last <- rep(NA, length(data_last))
-    for (i in 1:length(data_last)) {
-      ind_last[i] <- tail(which(ML.df.all[,i] == data_last[[i]]),n=1)
-    }
-    
-    # Find last non-NaN data point
-    ind_end <- max(ind_last)
-    
-    # create subset of data excluding NAs at the end of the time series
-    ML.df <- ML.df.all[1:ind_end, ] 
-    
-    # Create time variables & sine and cosine functions
-    df <- df[1:ind_end, ]
-    df$DOY <- yday(df$datetime)
-    ML.df <- ML.df %>%
-      mutate(s = sin((df$DOY-1)/365*2*pi), # Sine function to represent the seasonal cycle
-             c = cos((df$DOY-1)/365*2*pi)) # cosine function to represent the seasonal cycle
-    
-  } else { # For the middle years
-    
-    ML.df <- ML.df.all # if using the full dataset including NAs
-    
-    # Create time variables & sine and cosine functions
-    df$DOY <- yday(df$datetime)
-    ML.df <- ML.df %>%
-      mutate(s = sin((df$DOY-1)/365*2*pi), # Sine function to represent the seasonal cycle
-             c = cos((df$DOY-1)/365*2*pi)) # cosine function to represent the seasonal cycle
+  # Truncate data set to remove all NA values at the start
+  # Find first non-NA data point
+  data_first <- sapply(ML.df.all, function(x) x[min(which(!is.na(x)))])
+  
+  # See what index that corresponds too
+  ind_first <- rep(NA, length(data_first))
+  for (i in 1:length(data_first)) {
+    ind_first[i] <- head(which(ML.df.all[,i] == data_first[[i]]),n=1)
   }
+  
+  # Find last first-NaN data point but exclude USTAR
+  ind_USTAR <- which(vars_reorder == 'USTAR')
+  ind_start <- min(ind_first[-ind_USTAR])
+  
+  # Truncate data set to remove future time steps
+  # Find last non-NA data point
+  data_last <- sapply(ML.df.all, function(x) x[max(which(!is.na(x)))])
+  
+  # See what index that corresponds too
+  ind_last <- rep(NA, length(data_last))
+  for (i in 1:length(data_last)) {
+    ind_last[i] <- tail(which(ML.df.all[,i] == data_last[[i]]),n=1)
+  }
+  
+  # Find last non-NaN data point
+  ind_end <- max(ind_last)
+  
+  # create subset of data excluding NAs at the end of the time series
+  ML.df <- ML.df.all[ind_start:ind_end, ] 
+  
+  # Create time variables & sine and cosine functions
+  df <- df[ind_start:ind_end, ]
+  df$DOY <- yday(df$datetime)
+  ML.df <- ML.df %>%
+    mutate(s = sin((df$DOY-1)/365*2*pi), # Sine function to represent the seasonal cycle
+           c = cos((df$DOY-1)/365*2*pi)) # cosine function to represent the seasonal cycle
   
   # Apply gap-filling function
   predictor_vars <- c(predictor_vars,"c","s") # Add sine and cosine to predictor list
@@ -152,15 +127,7 @@ RF_gf <- function(df,fill_var,predictor_vars,plot_results,datetime,year_of_inter
   # Rename variable names base on the dependant variable
   names(result)[2:4] <- c(paste(var_dep,'_RF_model',sep=""),paste(var_dep,'_RF_filled',sep=""),paste(var_dep,'_RF_residual',sep=""))
   
-  # time series
-  if (year_of_interest == first(yrs)) {
-    result$DateTime <- datetime[ind_start:length(datetime)]
-  } else if (year_of_interest == last(yrs)) {
-    result$DateTime <- datetime[1:ind_end] 
-    
-  } else { # For the middle years
-    result$DateTime <- datetime
-  }
+  result$DateTime <- datetime[ind_start:ind_end]
   
   if (plot_results == 1) {
     # variable importance
@@ -189,37 +156,19 @@ RF_gf <- function(df,fill_var,predictor_vars,plot_results,datetime,year_of_inter
   # Output filled data (including 'var_Ustar_f_RF', 'var_Ustar_fall_RF' -> same naming convention as REddyProc)
   df.out <- data.frame(ML.df.all[,1]) 
   
-  # Make sure output data frame is the same length as a full year of data
-  if (year_of_interest == first(yrs)) {
-    
-    df.out[ind_start:length(datetime),] <- result[,3] #RF_filled
-    names(df.out) <- paste(var_dep,'_Ustar_f_RF',sep="")
-    df.out$RF_filled <- NA
-    df.out$RF_filled[ind_start:length(datetime)] <- result[,2] #RF_model
-    names(df.out)[2] <- paste(var_dep,'_Ustar_fall_RF',sep="")
-    
-  } else if (year_of_interest == last(yrs)) {
-    
-    df.out[1:ind_end,] <- result[,3] #RF_filled
-    names(df.out) <- paste(var_dep,'_Ustar_f_RF',sep="")
-    df.out$RF_filled <- NA
-    df.out$RF_filled[1:ind_end] <- result[,2] #RF_model
-    names(df.out)[2] <- paste(var_dep,'_Ustar_fall_RF',sep="")
-    
-  } else { # For the middle years
-    
-    df.out <- result[,3] #RF_filled
-    names(df.out) <- paste(var_dep,'_Ustar_f_RF',sep="")
-    df.out$RF_filled <- result[,2] #RF_model
-    names(df.out)[2] <- paste(var_dep,'_Ustar_fall_RF',sep="")
-  }
+  # Make sure output data frame is the same length as the input data
+  df.out[ind_start:ind_end, ] <- result[,3] #RF_filled
+  names(df.out) <- paste(var_dep,'_Ustar_f_RF',sep="")
+  df.out$RF_filled <- NA
+  df.out$RF_filled[ind_start:ind_end] <- result[,2] #RF_model
+  names(df.out)[2] <- paste(var_dep,'_Ustar_fall_RF',sep="")
   
   # # Check that output variables are correct
-  # df.out$DateTime <- datetime
-  # 
-  # df.out %>% ggplot(aes_string(x='DateTime',y=names(df.out)[2])) + geom_point(color="red",alpha=0.5) +
-  #   geom_point(aes_string(x='DateTime',y=names(df.out)[1]),color="black")+
-  #   theme_bw() + ylab(var_dep)
+  df.out$DateTime <- datetime
+  
+  df.out %>% ggplot(aes_string(x='DateTime',y=names(df.out)[2])) + geom_point(color="red",alpha=0.5) +
+    geom_point(aes_string(x='DateTime',y=names(df.out)[1]),color="black")+
+    theme_bw() + ylab(var_dep)
   
   return(df.out)
 }

@@ -230,7 +230,6 @@ for (j in 1:(length(vars_stagetwo))) {
     
     df <- do.call(rbind,l) 
     
-    
     p <- ggplot() + 
       geom_point(data = df, aes(x = datetime, y = var_stageone, color = "stage one")) +
       geom_point(data = df, aes(x = datetime, y = var_stagetwo, color = "stage two")) +

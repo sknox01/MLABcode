@@ -16,6 +16,17 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
   # Load ini file
   source(paste(ini_path,ini_file_name,sep = ""))
   
+  #Copy files from second stage to third stage
+  for (j in 1:length(yrs)) {
+    in_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/clean/SecondStage/", sep = "")
+    copy_vars_full <- paste(in_path,copy_vars, sep="")
+    
+    out_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/",level_out, sep = "")
+    setwd(out_path)
+    
+    file.copy(copy_vars_full,out_path,overwrite = TRUE)
+  }
+  
   # Read function for loading data
   p <- sapply(list.files(pattern="read_database.R", path=fx_path, full.names=TRUE), source)
   
@@ -204,13 +215,9 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
       setwd(out_path)
       
       file.copy("clean_tv",paste(basepath,"/",as.character(yrs[j]),"/",site,"/REddyProc_RF",sep = ""),overwrite = TRUE)
-      
-      #Copy files from second stage to third stage
-      in_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/clean/SecondStage/", sep = "")
-      copy_vars_full <- paste(in_path,copy_vars, sep="")
-      
-      file.copy(copy_vars_full,out_path,overwrite = TRUE)
     }
   }
 }
+
+
 

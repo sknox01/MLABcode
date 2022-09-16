@@ -8,3 +8,4 @@ biomet/
 Test/
 data_visualization/*.html
 data_visualization/stages_check/*.html
+database_functions/*.html

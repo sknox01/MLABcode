@@ -25,7 +25,7 @@ micrometDatabaseFolder = '/Volumes/Projects/Database';
 localDatabaseFolder = '/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database';
 
 siteID = 'DSM';
-yearToCopy = 2022;
+yearToCopy = 2021;
 folderToCopy = fullfile(micrometDatabaseFolder,num2str(yearToCopy),siteID);
 destinationFolder = fullfile(localDatabaseFolder,num2str(yearToCopy)); % REMOVED SITE ID
 cmdStr = sprintf('rsync -av --update %s %s',folderToCopy,destinationFolder); % Copies over only files that have changed & uses timestamp from vinimet
@@ -64,7 +64,7 @@ fclose(fid);
 % as an input to fr_automated_cleaning
 
 % Run cleaning
-fr_automated_cleaning(yearToCopy,siteID,1:2,[],localDatabaseFolder)
+fr_automated_cleaning(2021:2022,siteID,1:2,[],localDatabaseFolder)
 
 
 

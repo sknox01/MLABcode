@@ -5,11 +5,11 @@
 # Load data
 opts_knit$set(root.dir = "/Users/sara/Code/MLABcode/data_visualization") # Specify directory
 
-basepath <- "/Volumes/Projects/Database"
+basepath <- "/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database"
 yrs <- c(2021:2022)
 site <- "DSM"
-level <- "Met"
-vars_met <- c("MET_HMP_T_2m_Avg",'MET_HMP_RH_2m_Avg','MET_SHFP_1_Avg','MET_CNR4_SWi_Avg','MET_CNR4_LWi_Avg','MET_CNR4_LWo_Avg','MET_CNR4_Alb_Avg','MET_RainTips_Tot',
+level <- "Met/clean"
+vars_met <- c("TA_1_1_1",'RH_1_1_1','G_1_1_1','SW_IN_1_1_1','SW_IN_1_1_1','LW_IN_1_1_1','LW_OUT_1_1_1','MET_CNR4_Alb_Avg','MET_RainTips_Tot',
           'RAW_RainTips_Tot','MET_WaterCond_Avg','MET_WaterDO_Avg','MET_WaterDO_perc_Avg','MET_WaterLevel_Avg','MET_WaterORP_Avg','MET_SoilT_P2_10cm_Avg',
           'MET_Barom_Press_kPa_Avg')
 
@@ -19,8 +19,8 @@ export <- 0 # 1 to save a csv file of the data, 0 otherwise
 # Path to function to load data
 source("/Users/sara/Code/MLABcode/database_functions/read_database.R")
 
-data_met <- load.export.data(basepath,yrs,site,level,vars_met,export)
-
+data_met <- load.export.data(basepath,yrs,site,level,vars_met,"clean_tv",export)
+           
 # plot_ly(data = data, x = ~datetime, y = ~file_records, type = 'scatter', mode = 'lines')
 
 level <- "Flux"
@@ -45,9 +45,9 @@ source("/Users/sara/Code/MLABcode/database_functions/read_database.R")
 
 data_flux <- load.export.data(basepath,yrs,site,level,vars_flux,export)
 
-plot_ly(data = data_flux, x = ~datetime, y = ~motor_spinning_LI_7700, type = 'scatter', mode = 'lines')
-
-plot_ly(data = data_flux, x = ~datetime, y = ~t_out_LI_7200, type = 'scatter', mode = 'lines',name = 'MET_HMP_T_2m_Avg') %>% 
-  add_trace(data = data_flux, x = ~datetime, y = ~co2_flux, mode = 'lines',name = 'air_7200') 
+# plot_ly(data = data_flux, x = ~datetime, y = ~motor_spinning_LI_7700, type = 'scatter', mode = 'lines')
+# 
+# plot_ly(data = data_flux, x = ~datetime, y = ~t_out_LI_7200, type = 'scatter', mode = 'lines',name = 'MET_HMP_T_2m_Avg') %>% 
+#   add_trace(data = data_flux, x = ~datetime, y = ~co2_flux, mode = 'lines',name = 'air_7200') 
 
 

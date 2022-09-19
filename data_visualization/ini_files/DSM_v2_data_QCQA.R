@@ -6,7 +6,7 @@
 opts_knit$set(root.dir = "/Users/sara/Code/MLABcode/data_visualization") # Specify directory
 
 basepath <- "/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database"
-yrs <- c(2022)
+yrs <- c(2021:2022)
 site <- "DSM"
 level <- c("Flux/clean","Met/clean")
 vars <- c("WD_1_1_1","wind_dir","WS_1_1_1","wind_speed","USTAR","pitch","w_var",
@@ -26,7 +26,7 @@ source("/Users/sara/Code/MLABcode/database_functions/read_database.R")
 data1 <- load.export.data(basepath,yrs,site,level,vars,tv_input,export)
 
 # Load traces just for plotting that aren't in clean
-basepath <- "/Volumes/Projects/Database" # Quite slow running through 
+basepath <- "/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database" # Quite slow running through 
 level <- c("Flux")
 vars_other <- c("air_temperature","air_t_mean","RH","air_pressure")
 tv_input <- "Clean_tv"
@@ -62,7 +62,7 @@ data$year <- year(data$datetime)
 # data <- data[ind, ]
 
 # Path to plotting functions
-data_visualization_path <- "/Users/sara/Code/MLABcode/data_visualization/"
+data_visualization_path <- "/Users/sara/Code/MLABcode/data_visualization"
 p <- sapply(list.files(pattern="[.]R$", path=data_visualization_path, full.names=TRUE), source)
 
 # Specify variables for sonic_plots.R
@@ -82,22 +82,22 @@ wind_std <- "W_SIGMA"
 
 # Temperature variables
 # Make sure that all temperature variables are in the same units (e.g., Celsius)
-data$sonic_temperature_C <- data$sonic_temperature-273.15
+#data$sonic_temperature_C <- data$sonic_temperature-273.15
 data$air_t_mean_C <- data$air_t_mean-273.15
 data$air_temperature_C <- data$air_temperature-273.15
 
 # Now specify variables
-vars_temp <- c("AIR_TEMP_2M","sonic_temperature_C","air_t_mean_C") # Order should be HMP, sonic temperature, 7700 temperature
+vars_temp <- c("TA_1_1_1","air_t_mean_C") # Order should be HMP, sonic temperature, 7700 temperature (NOTE - make sure to include sonic temperature!!) - c("AIR_TEMP_2M","sonic_temperature_C","air_t_mean_C")
 
 # RH variables
 
 # Now specify variables
-vars_RH <- c("RH_2M","RH") # Order should be HMP then 7200
+vars_RH <- c("RH_1_1_1","RH") # Order should be HMP then 7200 (CONFIRM SENSORS!)
 
 # Radiation variables
-vars_radiometer <- c("SHORTWAVE_IN","SHORTWAVE_OUT","LONGWAVE_IN","LONGWAVE_OUT") # note that SW_IN and SW_OUT should always be listed as variables 1 and 2, respectively
-vars_NETRAD <- "NR"
-vars_PPFD <- c("INCOMING_PAR","REFLECTED_PAR") #Note incoming PAR should always be listed first.
+vars_radiometer <- c("SW_IN_1_1_1","SW_OUT_1_1_1","LW_IN_1_1_1","LW_OUT_1_1_1") # note that SW_IN and SW_OUT should always be listed as variables 1 and 2, respectively
+vars_NETRAD <- "NETRAD_1_1_1"
+vars_PPFD <- c("PPFD_IN_1_1_1","PPFD_OUT_1_1_1") #Note incoming PAR should always be listed first.
 
 # # define the standard meridian for Burns Bog
 # Standard_meridian <- -120
@@ -213,23 +213,26 @@ vars_PPFD <- c("INCOMING_PAR","REFLECTED_PAR") #Note incoming PAR should always 
 data$air_pressure_kPa <- data$air_pressure/1000
 data$air_p_mean_kPa <- data$air_p_mean/1000
 
-vars_pressure <- c("air_pressure_kPa","air_p_mean_kPa","PA_1_5M","PA_EC_AIR2_5M") # note that 
+#vars_pressure <- c("air_pressure_kPa","air_p_mean_kPa","PA_1_5M","PA_EC_AIR2_5M") # note that 
 
 # Precip variables
 precip <- "PRECIP"
 
 # Soil heat flux
-vars_G <- c("SHFP_1","SHFP_2","SHFP_3")
+vars_G <- c("G_1_1_1","G_2_1_1","G_3_1_1")
 
 # Volumetric water content
-vars_VWC <- "SVWC"
+#vars_VWC <- "SVWC"
 
 # Water and soil temperature variables - note go with decreasing height/depth from highest measurement
-vars_TS <- c("WATER_TEMP_3_5CM","WATER_TEMP_2_5CM","WATER_TEMP_3_5CM",
-                    "SOIL_TEMP_1_5CM","SOIL_TEMP_1_10CM","SOIL_TEMP_1_30CM","SOIL_TEMP_1_50CM",
-                    "SOIL_TEMP_2_5CM","SOIL_TEMP_2_10CM","SOIL_TEMP_2_30CM","SOIL_TEMP_2_50CM",
-                    "SOIL_TEMP_3_5CM","SOIL_TEMP_3_10CM","SOIL_TEMP_3_30CM","SOIL_TEMP_3_50CM") 
+#vars_TS <- c("WATER_TEMP_3_5CM","WATER_TEMP_2_5CM","WATER_TEMP_3_5CM",
+#                    "SOIL_TEMP_1_5CM","SOIL_TEMP_1_10CM","SOIL_TEMP_1_30CM","SOIL_TEMP_1_50CM",
+#                    "SOIL_TEMP_2_5CM","SOIL_TEMP_2_10CM","SOIL_TEMP_2_30CM","SOIL_TEMP_2_50CM",
+#                    "SOIL_TEMP_3_5CM","SOIL_TEMP_3_10CM","SOIL_TEMP_3_30CM","SOIL_TEMP_3_50CM") 
 
 # Specify variables for Additional meteorological variables output
-var_other <- list(as.list(vars_G),as.list(vars_TS))
-yaxlabel_other <- c("G (W/m2)","Temperature (°C)")
+#var_other <- list(as.list(vars_G),as.list(vars_TS))
+#yaxlabel_other <- c("G (W/m2)","Temperature (°C)")
+
+var_other <- list(as.list(vars_G))
+yaxlabel_other <- c("G (W/m2)")

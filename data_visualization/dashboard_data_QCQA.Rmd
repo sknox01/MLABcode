@@ -1,6 +1,6 @@
 ---
 title: "Data QCQA" 
-knit: (function(inputFile, encoding) { rmarkdown::render(inputFile, encoding = encoding, output_file = file.path(dirname(inputFile), 'BB2_data_QCQA.html')) })
+knit: (function(inputFile, encoding) { rmarkdown::render(inputFile, encoding = encoding, output_file = file.path(dirname(inputFile), 'DSM_data_QCQA.html')) })
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -8,7 +8,7 @@ output:
 ---
 <!-- NOTES: 
 1) Make sure to update file name in knit above (e.g., BB2_data_QCQA.html) 
-2) Update init file (e.g., BB2_data_QCQA.R) -->
+2) Update ini file (e.g., BB2_data_QCQA.R) -->
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
@@ -39,7 +39,7 @@ library(ggpmisc)
 
 <!-- specify init file to read -->
 ```{r echo=FALSE}
-read_chunk('init_files/BB2_data_QCQA.R')
+read_chunk('ini_files/DSM_v2_data_QCQA.R')
 ```
 
 ```{r, echo=FALSE}
@@ -90,20 +90,13 @@ Column {data-width=400}
 
 ### Temperature scatterplot
 ```{r}
-scatter_plot_temp_QCQA(data,eval(parse(text = paste0("data$",vars_temp[1]))),
-                       eval(parse(text = paste0("data$",vars_temp[2]))),
-                       eval(parse(text = paste0("data$",vars_temp[3]))),
-                       c("Sonic","7700"),
-                       "HMP Air temperature (°C)","Other Air Temperature (°C)")
+scatter_plot_QCQA(data,vars_temp[1],vars_temp[2],"HMP Air temperature (°C)","Other Air Temperature (°C)",0)
 ```
 
 ### RH HMP vs. RH 7200
 
 ```{r}
-scatter_plot_QCQA(eval(parse(text = paste0("data$",vars_RH[1]))),
-                  eval(parse(text = paste0("data$",vars_RH[2]))),
-                  eval(parse(text ="data$year")),
-                  "HMP RH (%)","LI-7200 RH (%)",0)
+scatter_plot_QCQA(data,vars_RH[1],vars_RH[2], "HMP RH (%)","LI-7200 RH (%)",0)
 ```
 
 Radiation  
@@ -122,17 +115,13 @@ Column {data-width=400}
 
 ### SW_IN vs PPDF_IN
 ```{r}
-scatter_plot_QCQA(eval(parse(text = paste0("data$",vars_radiometer[1]))),
-                  eval(parse(text = paste0("data$",vars_PPFD[1]))),
-                  data$year,"SW_IN (W/m2)","PPFD_IN (µmolPhoton/m2/s1)",0)
+scatter_plot_QCQA(data,vars_radiometer[1],vars_PPFD[1], "SW_IN (W/m2)","PPFD_IN (µmolPhoton/m2/s1)",0)
 ```
 
 ### SW_OUT vs PPFD_OUT
 
 ```{r}
-scatter_plot_QCQA(eval(parse(text = paste0("data$",vars_radiometer[2]))),
-                  eval(parse(text = paste0("data$",vars_PPFD[2]))),
-                  data$year,"SW_OUT (W/m2)","PPFD_OUT (µmolPhoton/m2/s1)",0)
+scatter_plot_QCQA(data,vars_radiometer[2],vars_PPFD[2], "SW_OUT (W/m2)","PPFD_OUT (µmolPhoton/m2/s1)",00)
 ```
 
 Pressure 
@@ -144,7 +133,7 @@ Column {data-width=600}
 ### Pressure 
 ```{r}
 # Barometric pressure 
-plotly_loop(data,vars_pressure,"Barometric pressure (kPa)")
+#plotly_loop(data,vars_pressure,"Barometric pressure (kPa)")
 ```
 
 Column {data-width=400}

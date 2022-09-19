@@ -13,7 +13,7 @@
 # Load required libraries
 library("dplyr")
 library("lubridate")
-
+library("plotly")
 # Run ini file first 
 
 # Read function for loading data
@@ -53,6 +53,21 @@ data <- data %>%
 # plot_ly(data = data, x = ~datetime, y = ~NEE_uStar_f, name = 'filled', type = 'scatter', mode = 'markers',marker = list(size = 3)) %>%
 #   add_trace(data = data, x = ~datetime, y = ~NEE_uStar_orig, name = 'orig', mode = 'markers') %>% 
 #   toWebGL()
+
+# visualizing data
+plot_ly(data = data, x = ~datetime, y = ~NEE_U2.5_orig, name = 'U2.5', type = 'scatter', mode = 'markers',marker = list(size = 3)) %>%
+   add_trace(data = data, x = ~datetime, y =~NEE_uStar_orig, name = 'uStar', mode = 'markers') %>% 
+   add_trace(data = data, x = ~datetime, y =~NEE_U97.5_orig, name = 'U97.5', mode = 'markers') %>% 
+   toWebGL()
+
+plot_ly(data = data, x = ~datetime, y = ~NEE_U2.5_fall, name = 'U2.5 fall', type = 'scatter', mode = 'markers',marker = list(size = 3)) %>%
+  #add_trace(data = data, x = ~datetime, y =~NEE_U2.5_fall, name = 'U2.5 fall', mode = 'markers') %>% 
+  #add_trace(data = data, x = ~datetime, y =~NEE_uStar_f, name = 'uStar fill', mode = 'markers') %>% 
+  #add_trace(data = data, x = ~datetime, y =~NEE_uStar_fall, name = 'uStar fall', mode = 'markers') %>% 
+  #add_trace(data = data, x = ~datetime, y =~NEE_U97.5_f, name = 'U97.5 fill', mode = 'markers') %>% 
+  add_trace(data = data, x = ~datetime, y =~NEE_U97.5_fall, name = 'U97.5 fall', mode = 'markers') %>% 
+  add_trace(data = data, x = ~datetime, y =~NEE_uStar_orig, name = 'uStar orig', mode = 'markers',marker = list(size = 5)) %>% 
+  toWebGL()
 
 autoCorr <- lognorm::computeEffectiveAutoCorr(data$resid)
 nEff <- lognorm::computeEffectiveNumObs(data$resid, na.rm = TRUE)

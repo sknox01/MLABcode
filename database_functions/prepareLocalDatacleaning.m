@@ -13,7 +13,7 @@
 %% Edit the lines below to work on your Mac
 
 % in Matlab, change the default folder to the datacleaning folder
-cd /Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database
+cd /Users/sara/Code/MLABcode/database_functions
 
 
 %% Copy one year of data for one site in the target folder
@@ -21,15 +21,15 @@ cd /Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database
 
 % the folowing folder paths use MacOS naming convenction
 
-micrometDatabaseFolder = 'Volumes/Porjects/Database';  
+micrometDatabaseFolder = '/Volumes/Projects/Database';  
 localDatabaseFolder = '/Users/sara/Library/CloudStorage/OneDrive-UBC/UBC/database';
 
 siteID = 'DSM';
 yearToCopy = 2022;
 folderToCopy = fullfile(micrometDatabaseFolder,num2str(yearToCopy),siteID);
-destinationFolder = fullfile(localDatabaseFolder,num2str(yearToCopy),siteID);
-cmdStr = sprintf('rsync -av %s %s /R:3 /W:10 /REG /MIR /NDL /NFL /NJH',folderToCopy,destinationFolder); 
-[status,result] = system(cmdStr); 
+destinationFolder = fullfile(localDatabaseFolder,num2str(yearToCopy)); % REMOVED SITE ID
+cmdStr = sprintf('rsync -av --update %s %s',folderToCopy,destinationFolder); % Copies over only files that have changed & uses timestamp from vinimet
+[status,result] = system(cmdStr);
 
 % Make sure there are "../Calculation_Procedures/TraceAnalysis_ini/siteID"
 %                 and "../Calculation_Procedures/TraceAnalysis_ini/siteID/Derived_Variables"

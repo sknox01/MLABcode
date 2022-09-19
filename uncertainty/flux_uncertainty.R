@@ -38,25 +38,25 @@ data <- df[c(start_ind:end_ind), ]
 # Random error
 # Considering correlations
 
-# REddyProc flags filled data with poor gap-filling by a quality flag in NEE_<uStar>_fqc > 0 but still reports the fluxes. For aggregation we recommend computing the mean including those gap-filled records, i.e. using NEE_<uStar>_f instead of NEE_orig. However, for estimating the uncertainty of the aggregated value, the the gap-filled records should not contribute to the reduction of uncertainty due to more replicates.
+# REddyProc flags filled data with poor gap-filling by a quality flag in NEE_<uStar>_fqc > 0 but still reports the fluxes. 
+# For aggregation we recommend computing the mean including those gap-filled records, i.e. using NEE_<uStar>_f instead of NEE_orig. 
+# However, for estimating the uncertainty of the aggregated value, the the gap-filled records should not contribute to the reduction of uncertainty due to more replicates.
 # Hence, first we create a column 'NEE_orig_sd' similar to 'NEE_uStar_fsd' but where the estimated uncertainty is set to missing for the gap-filled records.
 data <- data %>% 
   mutate(
     NEE_orig_sd = ifelse(
       is.finite(NEE_uStar_orig), NEE_uStar_fsd, NA), # NEE_orig_sd includes NEE_uStar_fsd only for measured values
     NEE_uStar_fgood = ifelse(
-      NEE_uStar_fqc <= 1, NEE_uStar_f, NA), # Only include filled values for the most reliable gap-filled observations. Note that is.finite() shouldn't be used here.
-    resid = ifelse(NEE_uStar_fqc == 0, NEE_uStar_orig - NEE_uStar_fall, NA), # quantify the error terms, i.e. model-data residuals.
-    resid_not_filtered = NEE_uStar_orig - NEE_uStar_fall # quantify the error terms, i.e. model-data residuals but not filtered.
-  ) #QUESTION - NEE_uStar_fqc == 0 doesn't apply to NEE_uStar_orig since orig has no gap-filled data. Does bad-quality data mean the foken flags? Otherwise what is meant by 'Note that this function needs to be applied to the series including all records, i.e.  not filtering quality flag before.'?
-
+      NEE_uStar_fqc <= 1, is.finite(NEE_uStar_f), NA), # Only include filled values for the most reliable gap-filled observations. Note that is.finite() shouldn't be used here.
+    resid = ifelse(NEE_uStar_fqc == 0, NEE_uStar_orig - NEE_uStar_fall, NA)) # quantify the error terms, i.e. model-data residuals (only using observations and exclude also
+    # "good" gap-filled data)
 # plot_ly(data = data, x = ~datetime, y = ~NEE_uStar_f, name = 'filled', type = 'scatter', mode = 'markers',marker = list(size = 3)) %>%
 #   add_trace(data = data, x = ~datetime, y = ~NEE_uStar_orig, name = 'orig', mode = 'markers') %>% 
 #   toWebGL()
 
-autoCorr <- lognorm::computeEffectiveAutoCorr(data$resid_not_filtered)
-nEff <- lognorm::computeEffectiveNumObs(data$resid_not_filtered, na.rm = TRUE)
-c(nEff = nEff, nObs = sum(is.finite(data$resid_not_filtered))) #Check which resid to use!
+autoCorr <- lognorm::computeEffectiveAutoCorr(data$resid)
+nEff <- lognorm::computeEffectiveNumObs(data$resid, na.rm = TRUE)
+c(nEff = nEff, nObs = sum(is.finite(data$resid))) 
 
 # Note, how we used NEE_uStar_f for computing the mean, but NEE_orig_sd instead of NEE_uStar_fsd for computing the uncertainty.
 resRand <- data %>% summarise(

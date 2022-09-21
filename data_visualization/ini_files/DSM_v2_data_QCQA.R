@@ -54,8 +54,9 @@ data <- replace(data, data == -9999, NA)
 inde <- which(Sys.Date() == data$datetime)
 data <- data[c(1:inde), ]
 
-# Create year column
+# Create year & DOY column
 data$year <- year(data$datetime)
+data$DOY <- yday(data$datetime)
 
 # # Remove empty columns for the end of the year (and start in some cases)
 # ind <- !is.nan(data$year)
@@ -84,6 +85,8 @@ wind_std <- "W_SIGMA"
 # Make sure that all temperature variables are in the same units (e.g., Celsius)
 #data$sonic_temperature_C <- data$sonic_temperature-273.15
 data$air_t_mean_C <- data$air_t_mean-273.15
+# Filter air_t_mean_C
+data$air_t_mean_C[(data$air_t_mean_C>60 | data$air_t_mean_C< -60) & !is.na(data$air_t_mean_C)] <- NA
 data$air_temperature_C <- data$air_temperature-273.15
 
 # Now specify variables
@@ -99,64 +102,27 @@ vars_radiometer <- c("SW_IN_1_1_1","SW_OUT_1_1_1","LW_IN_1_1_1","LW_OUT_1_1_1") 
 vars_NETRAD <- "NETRAD_1_1_1"
 vars_PPFD <- c("PPFD_IN_1_1_1","PPFD_OUT_1_1_1") #Note incoming PAR should always be listed first.
 
-# # define the standard meridian for Burns Bog
-# Standard_meridian <- -120
-# 
-# # Define long/lat
-# long <- -122.9849
-# Lat <- 49.1293
-# 
-# # Path to function to load data
-# source("/Users/sara/Code/MLABcode/potential_rad.R")
-# 
-# potential_rad <- potential_rad(Standard_meridian,long,Lat)
-# 
-# df <- data.frame(data$datetime, potential_rad,data$SHORTWAVE_IN)
-# p <- ggplot() + 
-#   geom_line(data = df, aes(x = data.datetime, y = potential_rad), color = "steelblue") + 
-#   geom_line(data = df, aes(x = data.datetime, y = data.SHORTWAVE_IN), color = "red") 
-# 
-#  p <-      ggplotly(p) %>%
-#     toWebGL()
-# p
-# 
-# # Compute mean diurnal pattern for 15 day moving window
-# source("/Users/sara/Code/MLABcode/diurnal_composite_moving_window.R")
-# diurnal.composite <- diurnal.composite(data$datetime,potential_rad,data$SHORTWAVE_IN,15,48)
-# 
-# p <- ggplot() + 
-#   geom_point(data = diurnal.composite, aes(x = time, y = potential_radiation), color = "steelblue",size = 0.5) +
-#   geom_point(data = diurnal.composite, aes(x = time, y = SW_IN), color = "red",linetype="dashed",size = 0.5) +
-#   geom_point(data = diurnal.composite, aes(x = time, y = exceeds), color = "black",size = 0.75)+
-#   scale_x_datetime(breaks="6 hours", date_labels = "%R") 
-# 
-# p <- ggplotly(p+ facet_wrap(~as.factor(firstdate))) %>% toWebGL()
-# p
-# 
-# # Calculate % of instances when SW_IN > potential_radiation (for daytime only)
-# 
-# # Find daytime indices
-# ind_day <- which(diurnal.composite$SW_IN > 20)
-# 
-# # Find periods when SW_IN > potential_radiation
-# ind_exceeds <- which(diurnal.composite$SW_IN[ind_day] > diurnal.composite$potential_radiation[ind_day])
-# 
-# exceeds <- length(ind_exceeds)/length(ind_day)*100
-# 
-# ccf_obj <- ccf(diurnal_composite$potential_radiation, diurnal_composite$SW_IN)
-# 
-# Find_Max_CCF(diurnal_composite$potential_radiation, diurnal_composite$SW_IN)
-# 
-# Find_Max_CCF<- function(a,b)
-# {
-#   d <- ccf(a, b, plot = FALSE)
-#   cor = d$acf[,,1]
-#   lag = d$lag[,,1]
-#   res = data.frame(cor,lag)
-#   res_max = res[which.max(res$cor),]
-#   return(res_max)
-# } 
-# 
+# Calculate potential radiation
+# define the standard meridian for DSM
+Standard_meridian <- -120
+
+# Define long/lat
+long <- -122.8942
+Lat <- 49.0886
+
+# Path to function to load data
+source("/Users/sara/Code/MLABcode/data_visualization/potential_rad_generalized.R")
+
+data$potential_radiation <- potential_rad(Standard_meridian,long,Lat,data$datetime,data$DOY)
+data$potential_radiation[is.na(data$SW_IN_1_1_1)] <- NA
+var_potential_rad <- "potential_radiation"
+
+# Compute mean diurnal pattern for 15 day moving window
+source("/Users/sara/Code/MLABcode/data_visualization/diurnal_composite_moving_window.R")
+diurnal.composite <- diurnal.composite(data$datetime,data$potential_radiation,data$SW_IN_1_1_1,15,48)
+
+diurnal.composite <- diurnal.composite[is.finite(diurnal.composite$potential_radiation), ]
+
 # # Plot diurnal pattern with moving window
 # source("/Users/sara/Code/MLABcode/diurnal_pattern_moving_window.R")
 # diurnal.summary <- diurnal.summary(data$datetime, data$SHFP_1, 30, 48)
@@ -165,49 +131,49 @@ vars_PPFD <- c("PPFD_IN_1_1_1","PPFD_OUT_1_1_1") #Note incoming PAR should alway
 #   dplyr::summarize(var = median(var, na.rm = TRUE),
 #                    HHMM = first(HHMM))
 # diurnal.summary.composite$time <- as.POSIXct(as.character(diurnal.summary.composite$HHMM), format="%R", tz="UTC")
-# 
-# p <- ggplot() + 
+#
+# p <- ggplot() +
 #   geom_point(data = diurnal.summary, aes(x = time, y = var),color = 'Grey',size = 0.1) +
 #   geom_line(data = diurnal.summary.composite, aes(x = time, y = var),color = 'Black') +
-#   scale_x_datetime(breaks="6 hours", date_labels = "%R") 
-# 
+#   scale_x_datetime(breaks="6 hours", date_labels = "%R")
+#
 # p <- ggplotly(p+ facet_wrap(~as.factor(firstdate))) %>% toWebGL()
 # p
-# 
+
 # # Long-term trend or step change
-# p.SW_IN<- ggplot() + 
-#   geom_point(data = data, aes(x = datetime, y = SHORTWAVE_IN),color = 'Grey',size = 0.1) 
-# 
-# p.PPFD_IN <- ggplot() + 
-#   geom_point(data = data, aes(x = datetime, y = INCOMING_PAR),color = 'Grey',size = 0.1) 
-# 
+# p.SW_IN<- ggplot() +
+#   geom_point(data = data, aes(x = datetime, y = SHORTWAVE_IN),color = 'Grey',size = 0.1)
+#
+# p.PPFD_IN <- ggplot() +
+#   geom_point(data = data, aes(x = datetime, y = INCOMING_PAR),color = 'Grey',size = 0.1)
+#
 # p <- grid.arrange(p.SW_IN, p.PPFD_IN, # Second row with 2 plots in 2 different columns
 #              nrow = 2)                       # Number of rows
-# 
+#
 # # Specify variables to keep
-# data_keep_columns <- c("year","SHORTWAVE_IN", "INCOMING_PAR") 
-# 
+# data_keep_columns <- c("year","SHORTWAVE_IN", "INCOMING_PAR")
+#
 # df_subset <- data[ ,colnames(data) %in% data_keep_columns]  # Extract columns from data
 # df <- na.omit(df_subset) # renove NA values
-# 
+#
 # data.by.year.R2 <- df %>%
 #   group_by(year) %>%
 #   dplyr::summarize(R2 = cor(SHORTWAVE_IN, INCOMING_PAR)^2)
-# 
+#
 # data.by.year.slope <- df %>%
 #   group_by(year) %>% # You can add here additional grouping variables if your real data set enables it
 #   do(mod = lm(SHORTWAVE_IN ~ INCOMING_PAR, data = .)) %>%
 #   mutate(slope = summary(mod)$coeff[2]) %>%
 #   select(-mod)
-# 
+#
 # data.by.year <- merge(data.by.year.R2,data.by.year.slope,by="year")
-# 
+#
 # # Create plot of timeseries of R2 and slope
 # multivariate_comparison_trend(data.by.year)
-# 
+#
 # # Plot data availability
 # plot_datayear(data)
-  
+
 # Pressure variables
 # Make sure that all pressure variables are in the same units (e.g., kPa)
 data$air_pressure_kPa <- data$air_pressure/1000

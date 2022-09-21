@@ -4,16 +4,17 @@
 
 # Input
 # data = dataframe with relevant variables
-# var_radiometer = variables from net radiometer (e.g., c("SHORTWAVE_IN","SHORTWAVE_OUT","LONGWAVE_IN","LONGWAVE_OUT")).
+# var_radiometer = variables from net radiometer (e.g., c("SW_IN_1_1_1","SW_OUT_1_1_1","LW_IN_1_1_1","LW_OUT_1_1_1")).
 #                  note that SW_IN and SW_OUT should always be listed as variables 1 and 2, respectively
 # var_NETRAD = Net radiation variable
-# var_PPFD = incoming and reflected PAR (e.g., c("INCOMING_PAR","REFLECTED_PAR")). Note incoming PAR should always be listed first.
-radiation_plots <- function(data,var_radiometer,var_NETRAD,var_PPFD){
+# var_PPFD = incoming and reflected PAR (e.g., c("PPFD_IN","PPFD_OUT")). Note incoming PAR should always be listed first.
+# var_potential_radiation = potential radiation calculated using the function potential_rad
+radiation_plots <- function(data,var_radiometer,var_NETRAD,var_PPFD, var_potential_radiation){
   
-  yaxlabel <- c("Radiation (W/m2)","Net radiation (W/m2)","SW_IN/PAR_IN","SW_OUT/PAR_OUT")
+  yaxlabel <- c("Radiation (W/m2)","Net radiation (W/m2)","SW_IN & PPFD_IN","SW_OUT & PPFD_OUT")
   
   # Radiation components
-  p_components <- plotly_loop(data,var_radiometer,yaxlabel[1])
+  p_components <- plotly_loop(data,c(var_potential_radiation,var_radiometer),yaxlabel[1])
   
   # NETRAD
   p_net <- plot_ly(data = data, x = ~datetime, y = as.formula(paste0("~",var_NETRAD)), type = 'scatter', mode = 'lines',name = var_NETRAD)%>%

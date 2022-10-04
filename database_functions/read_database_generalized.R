@@ -16,7 +16,7 @@
 
 # to output R dataframe, use df <- load.export.data(basepath,yrs,site,level,vars,outpath,outfilename,export)
 
-load.export.data <-
+read_data_generalized <-
   function(basepath,
            yrs,
            site,

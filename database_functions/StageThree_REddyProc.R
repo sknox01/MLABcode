@@ -22,7 +22,13 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
     copy_vars_full <- paste(in_path,copy_vars, sep="")
     
     out_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/",level_out, sep = "")
-    setwd(out_path)
+    
+    if (file.exists(out_path)){
+      setwd(out_path)
+    } else {
+      dir.create(out_path)
+      setwd(out_path)
+    }
     
     file.copy(copy_vars_full,out_path,overwrite = TRUE)
   }
@@ -144,7 +150,13 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
     
     # First save all REddyProc output under REddyProc
     out_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/",level_REddyProc, sep = "")
-    setwd(out_path)
+    
+    if (file.exists(out_path)){
+      setwd(out_path)
+    } else {
+      dir.create(out_path)
+      setwd(out_path)
+    }
     
     var_names <- colnames(FilledEddyData)
     for (i in 1:length(var_names)) {
@@ -153,7 +165,13 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
     
     # Output variables to stage three
     out_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/",level_out, sep = "")
-    setwd(out_path)
+    
+    if (file.exists(out_path)){
+      setwd(out_path)
+    } else {
+      dir.create(out_path)
+      setwd(out_path)
+    }
     
     # create new data frame with only variables of interest, and rename columns
     data_third_stage <- FilledEddyData[, which(names(FilledEddyData) %in% vars_third_stage_REddyProc)]
@@ -195,7 +213,13 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
       
       # First save all RF output under REddyProc_RF
       out_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/",level_REddyProc, sep = "")
-      setwd(out_path)
+    
+        if (file.exists(out_path)){
+        setwd(out_path)
+      } else {
+        dir.create(out_path)
+        setwd(out_path)
+      }
       
       var_names <- colnames(gap_filled_FCH4)
       for (i in 1:length(var_names)) {
@@ -204,7 +228,13 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
       
       # Output variables to stage three
       out_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/",level_out, sep = "")
-      setwd(out_path)
+      
+      if (file.exists(out_path)){
+        setwd(out_path)
+      } else {
+        dir.create(out_path)
+        setwd(out_path)
+      }
       
       # Save only RF filled FCH4 flux
       writeBin(as.numeric(gap_filled_FCH4[ind,1]), vars_third_stage_RF_FCH4, size = 4)
@@ -212,7 +242,13 @@ StageThree_REddyProc <- function(ini_file_name,ini_path) {
       # Copy over clean_tv to REddyProc_RF
       # set wd to third stage
       out_path <- paste(basepath,"/",as.character(yrs[j]),"/",site,"/",level_out, sep = "")
-      setwd(out_path)
+      
+      if (file.exists(out_path)){
+        setwd(out_path)
+      } else {
+        dir.create(out_path)
+        setwd(out_path)
+      }
       
       file.copy("clean_tv",paste(basepath,"/",as.character(yrs[j]),"/",site,"/REddyProc_RF",sep = ""),overwrite = TRUE)
     }

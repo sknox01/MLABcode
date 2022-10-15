@@ -35,7 +35,7 @@ read_data_generalized <-
     # Loop through years
     for (i in 1:length(yrs)) {
       
-      dinpath <-
+      inpath <-
         paste(basepath,
               "/",
               as.character(yrs[i]),

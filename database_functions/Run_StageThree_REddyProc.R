@@ -15,3 +15,4 @@ ini_path <- '/Users/sara/Code/MLABcode/database_functions/ini_files/' # specify 
 fx_path <- "/Users/sara/Code/MLABcode/database_functions/" # Specify path for loading functions
 
 StageThree_REddyProc(site, years, db_ini, db_out, ini_path, fx_path)
+                     

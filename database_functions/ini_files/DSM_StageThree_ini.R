@@ -27,7 +27,7 @@ var_names<-c('Year','DoY','Hour','NEE','FC','LE','H','FCH4','Rg','Tair','rH','VP
 #UNITS<-list('-','-','-','umol_m-2_s-1','umol_m-2_s-1','Wm-2','Wm-2','nmol_m-2_s-1','Wm-2','degC','%','hPa','ms-1')
 
 # Specify if running full Ustar scenarios ('full' - needed for better uncertainty estimation) or reduced Ustar scenarios ('fast' - runs faster)
-Ustar_scenario <- 'fast' # use 'full' or 'fast'
+Ustar_scenario <- 'full' # use 'full' or 'fast'
 
 # Define variables to save in third stage
 vars_third_stage_REddyProc <- c('GPP_uStar_f','GPP_DT_uStar','NEE_uStar_orig','NEE_uStar_f','FC_uStar_orig','FC_uStar_f','LE_uStar_orig','LE_uStar_f','H_uStar_orig','H_uStar_f','FCH4_uStar_orig','FCH4_uStar_f','Reco_uStar','Reco_DT_uStar')

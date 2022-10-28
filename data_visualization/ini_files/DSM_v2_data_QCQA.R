@@ -119,9 +119,9 @@ var_potential_rad <- "potential_radiation"
 
 # Compute mean diurnal pattern for 15 day moving window
 source("/Users/sara/Code/MLABcode/data_visualization/diurnal_composite_moving_window.R")
-diurnal.composite <- diurnal.composite(data$datetime,data$potential_radiation,data$SW_IN_1_1_1,15,48)
-
+diurnal.composite <- diurnal.composite(data$datetime,data$potential_radiation,data$SW_IN_1_1_1,data$PPFD_IN_1_1_1,15,48)
 diurnal.composite <- diurnal.composite[is.finite(diurnal.composite$potential_radiation), ]
+
 
 # # Plot diurnal pattern with moving window
 # source("/Users/sara/Code/MLABcode/diurnal_pattern_moving_window.R")

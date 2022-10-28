@@ -127,24 +127,17 @@ scatter_plot_QCQA(data,vars_radiometer[2],vars_PPFD[2], "SW_OUT (W/m2)","PPFD_OU
 Radiation Diagnostics
 =======================================================================
 
-Column {data-width=600}
+Row {data-height=600}
 -----------------------------------------------------------------------
 
-### Checking for offsets with potential radiation  
+### Checking for offsets between SW_IN (blue) and potential radiation (red)  
 ```{r}
-# CREATE FUNCTION!!
-p <- ggplot() +
-  geom_point(data = diurnal.composite, aes(x = time, y = potential_radiation), color = "steelblue",size = 0.5) +
-  geom_point(data = diurnal.composite, aes(x = time, y = SW_IN), color = "red",linetype="dashed",size = 0.5) +
-  geom_point(data = diurnal.composite, aes(x = time, y = exceeds), color = "black",size = 0.75)+
-  scale_x_datetime(breaks="6 hours", date_labels = "%R")
-
-p <- ggplotly(p+ facet_wrap(~as.factor(firstdate))) %>% toWebGL()
-p
+SWIN_vs_potential_rad(diurnal.composite)
 ```
-
-Column {data-width=400}
------------------------------------------------------------------------
+### Checking for offsets between PPFD_IN (green) and potential radiation (red)  
+```{r}
+PPFDIN_vs_potential_rad(diurnal.composite)
+```
 
 ### Cross correlation analysis
 ```{r}

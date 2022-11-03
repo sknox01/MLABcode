@@ -15,7 +15,7 @@ vars <- c("WD_1_1_1","wind_dir","WS_1_1_1","wind_speed","USTAR","pitch","w_var",
           "air_pressure","air_p_mean","PA_1_1_1",
           "P_1_1_1","G_1_1_1","G_2_1_1","G_3_1_1",
           "TW_1_1_1","TS_1_1_1","TS_1_2_1","TS_1_3_1","TS_1_4_1",
-          "TS_2_1_1","TS_2_2_1","TS_2_3_1","TS_2_4_1")
+          "TS_2_1_1","TS_2_2_1","TS_2_3_1","TS_2_4_1","WTD_1_1_1")
 tv_input <- "clean_tv"
 
 export <- 0 # 1 to save a csv file of the data, 0 otherwise
@@ -122,23 +122,23 @@ source("/Users/sara/Code/MLABcode/data_visualization/diurnal_composite_moving_wi
 diurnal.composite <- diurnal.composite(data$datetime,data$potential_radiation,data$SW_IN_1_1_1,data$PPFD_IN_1_1_1,15,48)
 diurnal.composite <- diurnal.composite[is.finite(diurnal.composite$potential_radiation), ]
 
-
 # # Plot diurnal pattern with moving window
-# source("/Users/sara/Code/MLABcode/diurnal_pattern_moving_window.R")
-# diurnal.summary <- diurnal.summary(data$datetime, data$SHFP_1, 30, 48)
+# source("/Users/sara/Code/MLABcode/data_visualization/diurnal_pattern_moving_window.R")
+# diurnal.summary <- diurnal.summary(data$datetime, data$G_1_1_1, 30, 48)
+# 
 # diurnal.summary.composite <- diurnal.summary %>%
-#   group_by(firstdate,HHMM) %>%
-#   dplyr::summarize(var = median(var, na.rm = TRUE),
+# group_by(firstdate,HHMM) %>%
+# dplyr::summarize(var = median(var, na.rm = TRUE),
 #                    HHMM = first(HHMM))
 # diurnal.summary.composite$time <- as.POSIXct(as.character(diurnal.summary.composite$HHMM), format="%R", tz="UTC")
-#
-# p <- ggplot() +
-#   geom_point(data = diurnal.summary, aes(x = time, y = var),color = 'Grey',size = 0.1) +
-#   geom_line(data = diurnal.summary.composite, aes(x = time, y = var),color = 'Black') +
-#   scale_x_datetime(breaks="6 hours", date_labels = "%R")
-#
-# p <- ggplotly(p+ facet_wrap(~as.factor(firstdate))) %>% toWebGL()
-# p
+# 
+#  p <- ggplot() +
+#    geom_point(data = diurnal.summary, aes(x = time, y = var),color = 'Grey',size = 0.1) +
+#    geom_line(data = diurnal.summary.composite, aes(x = time, y = var),color = 'Black') +
+#    scale_x_datetime(breaks="6 hours", date_labels = "%R")
+# 
+#  p <- ggplotly(p+ facet_wrap(~as.factor(firstdate))) %>% toWebGL()
+#  p
 
 # # Long-term trend or step change
 # p.SW_IN<- ggplot() +
@@ -181,24 +181,19 @@ data$air_p_mean_kPa <- data$air_p_mean/1000
 
 #vars_pressure <- c("air_pressure_kPa","air_p_mean_kPa","PA_1_5M","PA_EC_AIR2_5M") # note that 
 
+# Other variables to plot (can also include vegetation indices and water quality data)
+
 # Precip variables
-precip <- "PRECIP"
+vars_precip <- "P_1_1_1"
 
 # Soil heat flux
 vars_G <- c("G_1_1_1","G_2_1_1","G_3_1_1")
 
-# Volumetric water content
-#vars_VWC <- "SVWC"
+vars_WTD <- "WTD_1_1_1"
 
 # Water and soil temperature variables - note go with decreasing height/depth from highest measurement
-#vars_TS <- c("WATER_TEMP_3_5CM","WATER_TEMP_2_5CM","WATER_TEMP_3_5CM",
-#                    "SOIL_TEMP_1_5CM","SOIL_TEMP_1_10CM","SOIL_TEMP_1_30CM","SOIL_TEMP_1_50CM",
-#                    "SOIL_TEMP_2_5CM","SOIL_TEMP_2_10CM","SOIL_TEMP_2_30CM","SOIL_TEMP_2_50CM",
-#                    "SOIL_TEMP_3_5CM","SOIL_TEMP_3_10CM","SOIL_TEMP_3_30CM","SOIL_TEMP_3_50CM") 
+vars_TS <- c("TW_1_1_1","TS_1_1_1","TS_1_2_1","TS_1_3_1","TS_1_4_1",
+             "TS_2_1_1","TS_2_2_1","TS_2_3_1","TS_2_4_1") 
 
-# Specify variables for Additional meteorological variables output
-#var_other <- list(as.list(vars_G),as.list(vars_TS))
-#yaxlabel_other <- c("G (W/m2)","Temperature (°C)")
-
-var_other <- list(as.list(vars_G))
-yaxlabel_other <- c("G (W/m2)")
+var_other <- list(as.list(vars_G),as.list(vars_precip),as.list(vars_WTD),as.list(vars_TS))
+yaxlabel_other <- c("G (W/m2)","Precipiataion (mm)", "Water table depth (m)","Temperature (°C)")

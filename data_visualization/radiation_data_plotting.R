@@ -36,5 +36,6 @@ radiation_plots <- function(data,var_radiometer,var_NETRAD,var_PPFD, var_potenti
     toWebGL() 
   
   p <- subplot(p_components,p_net, p_sw_ppfd_in, p_sw_ppfd_out, nrows = 4, shareX = TRUE, titleX = FALSE,titleY = TRUE)%>% layout(legend = list(orientation = 'h'))
+  
   return(p)
 }

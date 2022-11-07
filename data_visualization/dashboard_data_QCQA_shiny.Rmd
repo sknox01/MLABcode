@@ -1,17 +1,14 @@
 ---
 title: "Data QCQA" 
-knit: (function(inputFile, encoding) { rmarkdown::render(inputFile, encoding = encoding, output_file = file.path(dirname(inputFile), 'DSM_data_QCQA.html')) })
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
-    vertical_layout: scroll
 runtime: shiny
 ---
-<!-- NOTES: 
-1) Make sure to update file name in knit above (e.g., BB2_data_QCQA.html) 
-2) Update ini file (e.g., BB2_data_QCQA.R) -->
 
-```{r setup, include=FALSE}
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(datasets)
 library(flexdashboard)
 library(shiny)
 library(dplyr)
@@ -19,7 +16,6 @@ library(plotly)
 library(ggplot2)
 library(ggpubr)
 library(forecast)
-library(knitr)
 library(lubridate)
 library(hms)
 library(gridExtra)
@@ -27,6 +23,20 @@ library(amerifluxr)
 library(heatmaply)
 library(data.table)
 library(ggpmisc)
+library(knitr)
+```
+
+<!-- specify init file to read -->
+```{r echo=FALSE, include=FALSE}
+read_chunk('ini_files/DSM_v2_data_QCQA.R')
+```
+
+```{r, echo=FALSE, include=FALSE}
+<<LoadData>>
+```
+
+```{r}
+data(iris)
 ```
 
 ```{r echo=FALSE}
@@ -183,26 +193,26 @@ Other met
 
 Column {.sidebar}
 -----------------------------------------------------------------------
+
 ```{r}
-selectInput('ycol', 'Variable', names(data))
+selectInput('y', 'Variable', names(data))
 ```
 
-Column {data-width=350}
+Column
 -----------------------------------------------------------------------
 
-### Additional meteorological variables
+### Time series of other met variables
+
 ```{r}
-multiple_plotly_plots(data,var_other,yaxlabel_other)
+dataset <- reactive({
+  data[, c(input$x, input$y)]
+})
+
+renderPlotly({
+  plot_ly(data, x = ~datetime, y = ~data[[input$y]], type = 'scatter', mode = 'lines') %>%
+  layout(yaxis = list(title = input$y)) %>%
+    toWebGL() 
+})
 ```
 
-Flux time series {data-orientation=rows} 
-=======================================================================
-
-Row 
------------------------------------------------------------------------
-
-### Flux time series
-```{r}
-
-```
 

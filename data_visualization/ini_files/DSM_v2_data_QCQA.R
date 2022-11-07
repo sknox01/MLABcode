@@ -140,40 +140,6 @@ diurnal.composite <- diurnal.composite[is.finite(diurnal.composite$potential_rad
 #  p <- ggplotly(p+ facet_wrap(~as.factor(firstdate))) %>% toWebGL()
 #  p
 
-# # Long-term trend or step change
-# p.SW_IN<- ggplot() +
-#   geom_point(data = data, aes(x = datetime, y = SHORTWAVE_IN),color = 'Grey',size = 0.1)
-#
-# p.PPFD_IN <- ggplot() +
-#   geom_point(data = data, aes(x = datetime, y = INCOMING_PAR),color = 'Grey',size = 0.1)
-#
-# p <- grid.arrange(p.SW_IN, p.PPFD_IN, # Second row with 2 plots in 2 different columns
-#              nrow = 2)                       # Number of rows
-#
-# # Specify variables to keep
-# data_keep_columns <- c("year","SHORTWAVE_IN", "INCOMING_PAR")
-#
-# df_subset <- data[ ,colnames(data) %in% data_keep_columns]  # Extract columns from data
-# df <- na.omit(df_subset) # renove NA values
-#
-# data.by.year.R2 <- df %>%
-#   group_by(year) %>%
-#   dplyr::summarize(R2 = cor(SHORTWAVE_IN, INCOMING_PAR)^2)
-#
-# data.by.year.slope <- df %>%
-#   group_by(year) %>% # You can add here additional grouping variables if your real data set enables it
-#   do(mod = lm(SHORTWAVE_IN ~ INCOMING_PAR, data = .)) %>%
-#   mutate(slope = summary(mod)$coeff[2]) %>%
-#   select(-mod)
-#
-# data.by.year <- merge(data.by.year.R2,data.by.year.slope,by="year")
-#
-# # Create plot of timeseries of R2 and slope
-# multivariate_comparison_trend(data.by.year)
-#
-# # Plot data availability
-# plot_datayear(data)
-
 # Pressure variables
 # Make sure that all pressure variables are in the same units (e.g., kPa)
 data$air_pressure_kPa <- data$air_pressure/1000
@@ -182,6 +148,8 @@ data$air_p_mean_kPa <- data$air_p_mean/1000
 #vars_pressure <- c("air_pressure_kPa","air_p_mean_kPa","PA_1_5M","PA_EC_AIR2_5M") # note that 
 
 # Other variables to plot (can also include vegetation indices and water quality data)
+# Note that if needed, you can change the line 'Row {data-width=600}' below the line 
+# 'Other met {data-orientation=rows}' to better view all the data (i.e., increase the data-width)
 
 # Precip variables
 vars_precip <- "P_1_1_1"
